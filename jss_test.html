@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+    <head>
+        <script>
+            window.NODE_MODULE_PATH = '/jslib/'    
+            var process = {env : {NODE_ENV: 'dev'}};
+            var global = window
+        </script>
+            
+        <script src="jslib/jss/dist/jss.js"></script>
+        <script src="jslib/jss-preset-default/dist/jss-preset-default.js"></script>
+    </head>
+    <body>
+        <button id=button1>Hello World</button>
+        <script type="module">
+            jss.default.setup(jssPreset.default())
+            const styles = {
+                button: {
+                    fontSize: 12,
+                    '&:hover': {
+                        background: 'blue'
+                    }
+                },
+                ctaButton: {
+                    extend: 'button',
+                    '&:hover': {
+                        background: 'red'
+                    }
+                },
+                '@media (min-width: 1024px)': {
+                    button: {
+                        width: 200
+                    }
+                }
+            }
+
+            const {classes:cls} = jss.default.createStyleSheet(styles).attach()
+            console.log(cls)
+
+            document.body.innerHTML = `
+                <button class="${cls.button}">Button</button>
+                <button class="${cls.ctaButton}">CTA Button</button>`;
+
+        </script>
+    </body>
+</html>

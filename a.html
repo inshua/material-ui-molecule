@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+
+<head>
+
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,minimal-ui">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="../muse-ui/dist/muse-ui.css">
+    <link rel="stylesheet" href="../muse-ui/dist/muse-ui.js">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="molecule.js"></script>
+</head>
+
+<body>
+    <template>
+        <button molecule-def="mu.Button" type="button" tabindex="0" class="mu-flat-button demo-flat-button" style="user-select: none; outline: none; cursor: pointer; -webkit-appearance: none;">
+            <div class="mu-flat-button-wrapper">
+                <div molecule="mu.Ripple" id="ripple"></div>
+                <!---->
+                <span class="mu-flat-button-label">
+                    <molecule-placeholder></molecule-placeholder>
+                </span>
+            </div>
+            <script constructor>
+                var me = this;
+                this.$el.on('mouseenter', () => {
+                    this.$el.addClass('hover');
+                }).on('mouseleave', () => {
+                    this.$el.removeClass('hover');
+                }).on('mousedown', (event) => {
+                    style = getRippleStyle(event)
+                    this.$el.find('#ripple').molecule().ripple(style);
+                })
+
+                function getRippleStyle(event) {                                        
+                    debugger;
+                    //  这个方法返回一个矩形对象，包含四个属性：left、top、right和bottom。分别表示元素各边与页面上边和左边的距离。
+                    let rect = event.target.getBoundingClientRect()
+                    // 获取点击点的位置
+                    let x = event.offsetX
+                    let y
+                    if (x !== undefined) {
+                        y = event.offsetY
+                    } else {
+                        x = event.clientX - rect.left
+                        y = event.clientY - rect.top
+                    }
+                    // 获取最大边长
+                    let max
+                    if (rect.width === rect.height) {
+                        max = rect.width * 1.412
+                    } else {
+                        max = Math.sqrt((rect.width * rect.width) + (rect.height * rect.height))
+                    }
+                    const dim = (max * 2) + 'px'
+                    return {
+                        width: dim,
+                        height: dim,
+                        // 通过margin控制波纹中心点和点击点一致
+                        'margin-left': -max + x + 'px',
+                        'margin-top': -max + y + 'px'
+                    }
+                }
+
+            </script>
+        </button>
+
+
+        <div molecule-def="mu.Ripple">
+            <div class="mu-ripple-wrapper">
+                <!-- <div class="mu-circle-ripple mu-ripple-leave-active mu-ripple-leave-to"></div> -->
+                <div class="mu-circle-ripple mu-ripple-enter mu-ripple-enter-active"></div>                
+            </div>
+            <script constructor>                              
+                
+            </script>
+        </div>
+    </template>
+
+    <div class="header">
+        <div class="container">
+            <h1>Material Ripple Demo</h1>
+            <p>Hello and welcome to the Material Ripple Demo.</p>
+        </div>
+        <div class="container">
+            <button molecule="mu.Button">Test</button>
+        </div>
+    </div>
+</body>
+
+</html>
