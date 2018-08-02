@@ -183,6 +183,9 @@ Molecule.registerPrototype = async function(el, baseUrl) {
         }
         if (script) {
             var fun = new Function(script.innerHTML);
+            if(script.hasAttribute('module')){
+                fun.module = await import(script.getAttribute('module'))
+            }
             el.moleculeConstructor = fun;
             fun.extends = script.getAttribute('extends') || script.hasAttribute('extends');
             script.remove();
@@ -421,7 +424,11 @@ Molecule.scanMolecules = function(starter, manual) {
                         }
                     }
                 } else {
-                    m = new Molecule(target);
+                    if(def.moleculeConstructor.module){                        
+                        m = new (def.moleculeConstructor.module.default)(target)
+                    } else {
+                        m = new Molecule(target);
+                    }
                 }
                 if (m == null) debugger;
                 m.moleculePrototype = def;

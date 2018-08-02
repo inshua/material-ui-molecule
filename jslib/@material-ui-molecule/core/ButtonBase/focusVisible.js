@@ -1,19 +1,18 @@
 //  weak
-import keycode from 'keycode';
+import keycode from '/jslib/keycode/index.js';
 import warning from '/jslib/warning/browser.js';
-import contains from 'dom-helpers/query/contains';
-import ownerDocument from 'dom-helpers/ownerDocument';
+import ownerDocument from '/jslib/dom-helpers/ownerDocument.js';
 const internal = {
   focusKeyPressed: false,
   keyUpEventTimeout: -1
 };
 export function detectFocusVisible(instance, element, callback, attempt = 1) {
-  process.env.NODE_ENV !== "production" ? warning(instance.focusVisibleCheckTime, 'Material-UI: missing instance.focusVisibleCheckTime.') : void 0;
-  process.env.NODE_ENV !== "production" ? warning(instance.focusVisibleMaxCheckTimes, 'Material-UI: missing instance.focusVisibleMaxCheckTimes.') : void 0;
+  // process.env.NODE_ENV !== "production" ? warning(instance.focusVisibleCheckTime, 'Material-UI: missing instance.focusVisibleCheckTime.') : void 0;
+  // process.env.NODE_ENV !== "production" ? warning(instance.focusVisibleMaxCheckTimes, 'Material-UI: missing instance.focusVisibleMaxCheckTimes.') : void 0;
   instance.focusVisibleTimeout = setTimeout(() => {
     const doc = ownerDocument(element);
 
-    if (internal.focusKeyPressed && (doc.activeElement === element || contains(element, doc.activeElement))) {
+    if (internal.focusKeyPressed && (doc.activeElement === element || $.contains(element, doc.activeElement))) {
       callback();
     } else if (attempt < instance.focusVisibleMaxCheckTimes) {
       detectFocusVisible(instance, element, callback, attempt + 1);

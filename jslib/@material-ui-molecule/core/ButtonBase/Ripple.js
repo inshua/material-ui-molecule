@@ -1,107 +1,103 @@
-import _extends from "@babel/runtime/helpers/builtin/extends";
-import _objectWithoutProperties from "@babel/runtime/helpers/builtin/objectWithoutProperties";
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Transition from 'react-transition-group/Transition';
+
 /**
  * @ignore - internal component.
  */
-
 class Ripple extends React.Component {
-  constructor(...args) {
-    var _temp;
+  state = {
+    visible: false,
+    leaving: false,
+  };
 
-    return _temp = super(...args), this.state = {
-      visible: false,
-      leaving: false
-    }, this.handleEnter = () => {
-      this.setState({
-        visible: true
-      });
-    }, this.handleExit = () => {
-      this.setState({
-        leaving: true
-      });
-    }, _temp;
-  }
+  handleEnter = () => {
+    this.setState({
+      visible: true,
+    });
+  };
+
+  handleExit = () => {
+    this.setState({
+      leaving: true,
+    });
+  };
 
   render() {
-    const _props = this.props,
-          {
+    const {
       classes,
       className: classNameProp,
       pulsate,
       rippleX,
       rippleY,
-      rippleSize
-    } = _props,
-          other = _objectWithoutProperties(_props, ["classes", "className", "pulsate", "rippleX", "rippleY", "rippleSize"]);
+      rippleSize,
+      ...other
+    } = this.props;
 
-    const {
-      visible,
-      leaving
-    } = this.state;
-    const rippleClassName = classNames(classes.ripple, {
-      [classes.rippleVisible]: visible,
-      [classes.ripplePulsate]: pulsate
-    }, classNameProp);
+    const { visible, leaving } = this.state;
+
+    const rippleClassName = classNames(
+      classes.ripple,
+      {
+        [classes.rippleVisible]: visible,
+        [classes.ripplePulsate]: pulsate,
+      },
+      classNameProp,
+    );
+
     const rippleStyles = {
       width: rippleSize,
       height: rippleSize,
       top: -(rippleSize / 2) + rippleY,
-      left: -(rippleSize / 2) + rippleX
+      left: -(rippleSize / 2) + rippleX,
     };
+
     const childClassName = classNames(classes.child, {
       [classes.childLeaving]: leaving,
-      [classes.childPulsate]: pulsate
+      [classes.childPulsate]: pulsate,
     });
-    return React.createElement(Transition, _extends({
-      onEnter: this.handleEnter,
-      onExit: this.handleExit
-    }, other), React.createElement("span", {
-      className: rippleClassName,
-      style: rippleStyles
-    }, React.createElement("span", {
-      className: childClassName
-    })));
-  }
 
+    return (
+      <Transition onEnter={this.handleEnter} onExit={this.handleExit} {...other}>
+        <span className={rippleClassName} style={rippleStyles}>
+          <span className={childClassName} />
+        </span>
+      </Transition>
+    );
+  }
 }
 
-Ripple.propTypes = process.env.NODE_ENV !== "production" ? {
+Ripple.propTypes = {
   /**
    * Override or extend the styles applied to the component.
    * See [CSS API](#css-api) below for more details.
    */
   classes: PropTypes.object.isRequired,
-
   /**
    * @ignore
    */
   className: PropTypes.string,
-
   /**
    * If `true`, the ripple pulsates, typically indicating the keyboard focus state of an element.
    */
   pulsate: PropTypes.bool,
-
   /**
    * Diameter of the ripple.
    */
   rippleSize: PropTypes.number,
-
   /**
    * Horizontal position of the ripple center.
    */
   rippleX: PropTypes.number,
-
   /**
    * Vertical position of the ripple center.
    */
-  rippleY: PropTypes.number
-} : {};
-Ripple.defaultProps = {
-  pulsate: false
+  rippleY: PropTypes.number,
 };
+
+Ripple.defaultProps = {
+  pulsate: false,
+};
+
 export default Ripple;

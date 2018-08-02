@@ -1,4 +1,4 @@
-import ownerDocument from 'dom-helpers/ownerDocument';
+import ownerDocument from '/jslib/dom-helpers/ownerDocument.js';
 
 const ownerWindow = (node, fallback = window) => {
   const doc = ownerDocument(node);

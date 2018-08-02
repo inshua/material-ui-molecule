@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+    <head>
+        <!-- cannot access from other code <script type="module" src="/test/utils.js" id="utils"></script>               -->
+        <script>
+            (async () =>{
+                let utils = await import('/test/utils.js');
+                utils.addTextToBody('Modules are pretty cool.');
+            })();
+        </script>
+
+        <!-- BAD <script async>
+            let utils = await import('/test/utils.js');
+            utils.addTextToBody('Modules are pretty cool.');
+        </script> -->
+    </script>
+    </head>
+</html>

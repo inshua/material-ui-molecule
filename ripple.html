@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+    <head>
+        <script>
+            var process = {env : {NODE_ENV: 'dev'}};
+            var global = window
+        </script>
+
+        <script src="jslib/jquery-3.3.1.js"></script>
+        <script src="jslib/jss/dist/jss.js"></script>
+        
+        <script src="jslib/jss-global/dist/jss-global.js"></script>
+        <script src="jslib/jss-nested/dist/jss-nested.js"></script>
+        <script src="jslib/jss-camel-case/dist/jss-camel-case.js"></script>
+        <script src="jslib/jss-default-unit/dist/jss-default-unit.js"></script>
+        <script src="jslib/jss-vendor-prefixer/dist/jss-vendor-prefixer.js"></script>
+        <script src="jslib/jss-props-sort/dist/jss-props-sort.js"></script>
+        <script src="jslib/classnames/index.js"></script>
+
+        <script src="jslib/jquery.attrs.js"></script>
+
+        <script src="jslib/molecule.js"></script>
+    </head>
+    <body>
+        <template>
+            <span molecule-def=mui.TouchRipple>
+                <script constructor module="/jslib/@material-ui-molecule/core/ButtonBase/TouchRippleMolecule.js">
+                    // setTimeout(()=>{
+                    //     this.start({}, {}, ()=>{console.log('ripple start')});
+                    //     setTimeout(()=>{
+                    //         this.stop({}, ()=>{console.log('ripple stopped')});
+                    //     }, 1000)
+                    // }, 1000);
+                </script>
+            </span>
+            <span molecule-def=mui.Ripple>
+                <span></span>
+                <script constructor module="/jslib/@material-ui-molecule/core/ButtonBase/RippleMolecule.js">
+                </script>
+            </span>
+            <button molecule-def=mui.Button>
+                <span><molecule-placeholder></molecule-placeholder></span>
+                <script constructor module="/jslib/@material-ui-molecule/core/Button/ButtonMolecule.js">
+                </script>
+            </button>
+        </template>
+
+        <!-- <span molecule=mui.TouchRipple rippleX=200 rippleY=200 rippleSize=200>TouchRipple</span> -->
+        <button molecule=mui.Button>
+            CLICK ME
+        </button>
+
+        <button molecule=mui.Button color=primary>
+            CLICK ME
+        </button>
+    </body>
+</html>
