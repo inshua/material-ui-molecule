@@ -3,6 +3,7 @@ import ownerWindow from '../utils/ownerWindow.js';
 import createRippleHandler from './createRippleHandler.js';
 import {ReactComponent} from '../../fake-react.js'
 import {attachJss, defaultTheme} from '../../jss.js'
+import deepmerge from '/jslib/deepmerge/dist/umd.js'; 
 
 const DURATION = 550;
 export const DELAY_RIPPLE = 80;
@@ -99,10 +100,6 @@ export default class TouchRipple extends ReactComponent {
     constructor(el) {
         super(el)
 
-        this.assign(TouchRipple.defaultProps)
-        let className = classNames(this.props.classes.root, this.props.className)
-        this.el.className = className;
-
         // Used to filter out mouse emulated events on mobile.
         this.ignoringMouseDown = false;
 
@@ -116,6 +113,23 @@ export default class TouchRipple extends ReactComponent {
         this.state = {
             ripples: [],
         };
+
+        if(this.constructor == TouchRipple){
+            this.handlePropsChanged()
+        }
+    }
+
+    mixProps(props){
+        super.mixProps(deepmerge(TouchRipple.defaultProps, props));
+    }
+    
+    prepareClasses(){
+        this.props.classes = defaultClasses;
+    }
+
+    render(){
+        let className = classNames(this.props.classes.root, this.props.className)
+        this.el.className = className;
     }
 
     dispose() {
@@ -218,7 +232,6 @@ export default class TouchRipple extends ReactComponent {
     };
 
     startCommit(params) {
-        console.log(params);
         const {
             pulsate,
             rippleX,
@@ -229,8 +242,8 @@ export default class TouchRipple extends ReactComponent {
         let ripple = $(document.createElement('span')).setAttrs({
             molecule: 'mui.Ripple',
             props: JSON.stringify({
-                'exit-timeout': DURATION,
-                'enter-timeout': DURATION,
+                exitTimeout: DURATION,
+                enterTimeout: DURATION,
                 pulsate: pulsate,
                 classes: this.props.classes,
                 pulsate: pulsate,
@@ -265,10 +278,7 @@ export default class TouchRipple extends ReactComponent {
 
         if (ripples && ripples.length) {
             let ripple = this.state.ripples.shift()
-            ripple.exit(()=>{
-                ripple.el.remove();
-                if(cb) cb()
-            });
+            ripple.exit(cb);
         }
     };
 }

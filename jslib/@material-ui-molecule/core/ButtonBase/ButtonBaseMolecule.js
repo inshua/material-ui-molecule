@@ -5,6 +5,7 @@ import {  listenForFocusKeys,  detectFocusVisible} from './focusVisible.js';
 import createRippleHandler from './createRippleHandler.js';
 import {  ReactComponent} from '../../fake-react.js'
 import {attachJss} from '../../jss.js'
+import deepmerge from '/jslib/deepmerge/dist/umd.js'; 
 
 export const styles = {
   /* Styles applied to the root element. */
@@ -102,7 +103,9 @@ export class ButtonBase extends ReactComponent {
       if (focusRipple && !this.keyDown && this.state.focusVisible && this.ripple && key === 'space') {
         this.keyDown = true;
         // event.persist();
+        console.log('stop ripple')
         this.ripple.stop(event, () => {
+          console.log('start ripple')
           this.ripple.start(event);
         });
       }
@@ -177,8 +180,6 @@ export class ButtonBase extends ReactComponent {
 
     this.state = {};
 
-    this.assign(ButtonBase.defaultProps);
-
     this.ripple = null;
 
     this.keyDown = false; // Used to help track keyboard activation keyDown
@@ -189,19 +190,26 @@ export class ButtonBase extends ReactComponent {
 
     this.focusVisibleMaxCheckTimes = 5;
 
-    this.componentDidMount();
+    if(this.constructor == ButtonBase){
+      this.handlePropsChanged()
+    }
+  }
 
-    // this.render();
+  mixProps(props){
+    super.mixProps(deepmerge(ButtonBase.defaultProps, props));
+  }
+
+  prepareClasses(){
+    this.buttonBaseClasses = defaultClasses;
   }
 
   render() {
 
-    this.props.classes = defaultClasses;
+    const classes = this.buttonBaseClasses;
 
     let {
       action,
       centerRipple,
-      classes,
       className: classNameProp,
       disabled,
       disableRipple,
@@ -218,11 +226,11 @@ export class ButtonBase extends ReactComponent {
 
     const className = classNames(
       classes.root, {
-        [classes.disabled]: this.$el.attr('disabled'),
+        [classes.disabled]: this.$el.prop('disabled'),
         [classes.focusVisible]: this.state.focusVisible,
         [focusVisibleClassName]: this.state.focusVisible,
       },
-      this.el.className,
+      this.userDefinedProps.className,
     );
     this.el.className = className;
 
@@ -234,18 +242,9 @@ export class ButtonBase extends ReactComponent {
 
     this.el.tabIndex = disabled ? '-1' : tabIndex
 
-    this.$el.on('blur', this.handleBlur)
-      .on('focus', this.handleFocus)
-      .on('keydown', this.handleKeyDown)
-      .on('keyup', this.handleKeyUp)
-      .on('mousedown', this.handleMouseDown)
-      .on('mouseup', this.handleMouseUp)
-      .on('mouseleave', this.handleMouseLeave)
-      .on('touchend', this.handleTouchEnd)
-      .on('touchstart', this.handleTouchStart)
-      .on('touchmove', this.handleTouchMove);
+    this.$el.setAttrs(other)
 
-    if (this.$el.attr('disabled') || this.$el.attr('disableRipple')) {
+    if (this.props.disabled || this.props.disableRipple) {
       if (this.ripple) {
         this.ripple.$el.remove();
       }
@@ -258,6 +257,17 @@ export class ButtonBase extends ReactComponent {
 
 
   componentDidMount() {
+    this.$el.on('blur', this.handleBlur)
+    .on('focus', this.handleFocus)
+    .on('keydown', this.handleKeyDown)
+    .on('keyup', this.handleKeyUp)
+    .on('mousedown', this.handleMouseDown)
+    .on('mouseup', this.handleMouseUp)
+    .on('mouseleave', this.handleMouseLeave)
+    .on('touchend', this.handleTouchEnd)
+    .on('touchstart', this.handleTouchStart)
+    .on('touchmove', this.handleTouchMove);
+
     this.button = this.el
     listenForFocusKeys(ownerWindow(this.button));
 
@@ -280,6 +290,7 @@ export class ButtonBase extends ReactComponent {
       !prevState.focusVisible &&
       this.state.focusVisible
     ) {
+      console.log('pulsate')
       this.ripple.pulsate();
     }
   }
@@ -311,32 +322,12 @@ export class ButtonBase extends ReactComponent {
     };
   }
 
-  // render() {
-
-  //   return (
-  //     <ComponentProp
-  //       onTouchEnd={this.handleTouchEnd}
-  //       onTouchMove={this.handleTouchMove}
-  //       onTouchStart={this.handleTouchStart}
-  //       tabIndex={disabled ? '-1' : tabIndex}
-  //       className={className}
-  //       ref={buttonRef}
-  //       {...buttonProps}
-  //       {...other}
-  //     >
-  //       {children}
-  //       {!disableRipple && !disabled ? (
-  //         <TouchRipple innerRef={this.onRippleRef} center={centerRipple} {...TouchRippleProps} />
-  //       ) : null}
-  //     </ComponentProp>
-  //   );
-  // }
 }
 
 ButtonBase.defaultProps = {
   centerRipple: false,
   disableRipple: false,
   disableTouchRipple: false,
-  focusRipple: false,
+  focusRipple: true,
   tabIndex: '0',
 };

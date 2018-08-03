@@ -1,14 +1,45 @@
-+
-(function($) {
+const booleanProps = {'checked' : 1, 'disabled' :1 , 'selected': 1}
+
+function typed(value){
+    if(value == 'true') return true;
+    if(value == 'false') return false;
+    let n = value * 1;
+    if(!isNaN(n)) return n;
+    return value;
+}
+
+function camel2Dash( str ) {
+    // ensure starts in lower case
+    str = str.trim();
+
+    if ( str === '') {
+        return '';
+    }
+
+    str = str[ 0 ].toLowerCase() + str.substr( 1 );
+
+    return str.replace( /([A-Z])/g, function ( $1 ) {
+        return '-' + $1.toLowerCase();
+    } );
+};
+
+function dash2Camel( name ) {
+    return name.replace( /-+(.)/gi, function ( match, capture1 ) {
+        return capture1.toUpperCase();
+    } );
+}
+
++(function($) {
     $.fn.attrs = function(names) {
         let result = {}
         if(names){
             for(let n of names){
-                result[n] = this.attr(n);
+                result[n] = booleanProps[n] ? this.prop(n) : typed(this.attr(n));
             }
         } else {
             for(let a of this[0].attributes){
-                result[a.name] = result[a.value];
+                let n = a.name;
+                result[dash2Camel(n)] = booleanProps[n] ? this.prop(n) : typed(a.value);
             }
         }
         return result;
@@ -30,7 +61,8 @@
                     Object.assign(result, props);
                 }
             } else {
-                result[n] = result[a.value];
+                let n = a.name;
+                result[dash2Camel(n)] = booleanProps[n] ? this.prop(n) : typed(a.value);
             }
         }
         return result;
@@ -40,7 +72,12 @@
         for(let n of Object.keys(attrs)){
             let v = attrs[n];
             if(v != null){
-                this[0].setAttribute(n, v);
+                n = camel2Dash(n)
+                if(booleanProps[n]){
+                    this.prop(n, v)
+                } else {
+                    this[0].setAttribute(n, v);
+                }
             }
         }
         return this;

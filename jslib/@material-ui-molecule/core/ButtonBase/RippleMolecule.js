@@ -1,6 +1,5 @@
-import {
-  ReactComponent
-} from '../../fake-react.js'
+import {  ReactComponent } from '../../fake-react.js'
+import deepmerge from '/jslib/deepmerge/dist/umd.js'; 
 /**
  * @ignore - internal component.
  */
@@ -19,24 +18,28 @@ class Ripple extends ReactComponent {
   };
 
   exit(cb) {
-    if (cb) {
-      this.$el.find('span').one('animationend transitionend', () => {
-        cb()
-      })
-    }
     this.handleExit();
+    if(cb) cb();
   };
 
   constructor(el) {
     super(el)
-
-    this.assign(Ripple.defaultProps);
 
     this.state = {
       visible: false,
       leaving: false,
     };
 
+    if(this.constructor == Ripple){
+      this.handlePropsChanged()
+    }
+  }
+
+  mixProps(props){
+    super.mixProps(deepmerge(Ripple.defaultProps, props));
+  }
+
+  componentDidMount(){
     this.handleEnter();
   }
 
@@ -77,7 +80,16 @@ class Ripple extends ReactComponent {
 
     this.el.className = rippleClassName;
     this.$el.css(rippleStyles);
-    this.$el.find('span')[0].className = childClassName;
+    const $span = this.$el.find('span');
+    // console.log('render ripple', this.state, 'assing class', childClassName)
+    $span[0].className = childClassName;
+    if(this.state.leaving){
+      setTimeout(() => {this.el.remove();}, this.props.exitTimeout)
+      // $span.one('animationend transitionend', () => {   pulsate 是一个无限循环，得不到 animationend 事件
+      //   console.log('leaving done, remove ripple element')
+      //   this.el.remove();    
+      // })
+    }
   }
 
 }
