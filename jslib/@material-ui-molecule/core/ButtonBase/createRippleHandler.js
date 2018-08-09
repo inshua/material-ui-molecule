@@ -6,7 +6,7 @@ function createRippleHandler(instance, eventName, action, cb) {
 
     let ignore = false;
 
-    if (event.defaultPrevented) {
+    if (event.defaultPrevented || event.isDefaultPrevented() /* jquery event */) {
       ignore = true;
     }
 

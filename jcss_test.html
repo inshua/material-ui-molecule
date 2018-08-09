@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+
+<head>
+    <script>
+        window.NODE_MODULE_PATH = '/jslib/'    
+        var process = {env : {NODE_ENV: 'dev'}};
+        var global = window
+    </script>
+    <script src="jslib/jquery-3.3.1.js"></script>
+    <script src="jslib/molecule.js"></script>
+    <script src="jslib/jcss.js"></script>
+
+    <script src="jslib/jss/dist/jss.js"></script>
+    <script src="jslib/jss-global/dist/jss-global.js"></script>
+    <script src="jslib/jss-nested/dist/jss-nested.js"></script>
+    <script src="jslib/jss-camel-case/dist/jss-camel-case.js"></script>
+    <script src="jslib/jss-default-unit/dist/jss-default-unit.js"></script>
+    <script src="jslib/jss-vendor-prefixer/dist/jss-vendor-prefixer.js"></script>
+    <script src="jslib/jss-props-sort/dist/jss-props-sort.js"></script>
+    <script src="jslib/classnames/index.js"></script>
+    <script src="jslib/@material-ui-molecule/jss.js" type="module" defer></script>
+</head>
+
+<body>
+    <div class="container" theme=default>
+        <div class="item">
+            <button>Click Me</button>
+        </div>
+    </div>
+    <style type="jcss" m-scoped args="width" id="jcss1">
+        .container[theme=j/*theme.name*/] .item button{
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            -webkit-tap-highlight-color: transparent;
+            background-color: 'transparent';
+            outline: 'none';
+            border: 0;
+            margin: 0; /* Remove the margin in Safari*/
+            border-radius: 0;
+            padding: 0; /* Remove the padding in Firefox*/
+            cursor: pointer;
+            user-select: none;
+            vertical-align: middle;            
+            -moz-appearance: none;/* Reset */
+            -webkit-appearance: none;   /* Reset*/
+            text-decoration: none;
+            /* // So we take precedent over the style of a native <a /> element. */
+            color: inherit;
+            ::-moz-focus-inner {
+                border: 0;
+            };
+            &$disabled: {
+                pointerEvents: none; /* Disable link interactions*/
+                cursor: 'default';
+            };
+        }
+
+        button[theme=j/*theme.name*/]{
+            color:fuchsia;
+            width: j/*width*/px;
+        }
+    </style>
+    <script>
+        /* jcss 转为一个生成 css 的函数。
+                主题不难实现。监听 theme 属性变更事件及添加带有 theme 属性的节点事件，如 theme 之前未实用过，对所有 jcss 函数调用该函数。
+                唯该方法只能对所有节点生效，且无法精确计算得出哪些函数可以不调用。当体积很大时可能会很慢。此外也无法退出。
+                如已指定 m-scoped，则只监听组件实例内的 theme 属性变更。
+           任意变量的绑定较难实现。
+           如任意变量只作用于 value，需要确定哪些 rule 和该值有关，不然打击面太大。
+           如变量系离散值，则变量改变后，需要删除之前得到的 rule。
+           如变量非离散值且分布到 rule name，则无法实现。
+           
+           如何得知该样式表的规则作用于哪些元素（直接和间接）以便在元素变化时响应呢？
+           当有 theme 变化时：
+           1. 遍历各个子节点，且列举所有 jcss 看是否符合 selector，如符合则重新编译
+           2. 从所有 jcss 出发，如该 jcss 对该 theme 未就绪，则生成 stylesheet，其子节点会自动适配新样式
+           
+           对于后者，当样式表多时，对某 theme 重新生成全部全部 stylesheet 速度会很慢。
+
+           前者符合按需生成的需要，唯当元素过多时，一一检查是否符合 selector 过滤 jcss rule 会很慢。
+
+           当样式表很多时，要检查所有 rule，效率较为低下。
+           还有一种选择是只对 molecule instance 检查，但是依然要对每个子节点执行所有检查。
+
+
+           行不通。设若不指定 theme=default，css selector 和 element 就不会发生绑定，css selector 不会追溯上一级也不会使用默认值。
+                如编写为 [theme=default] button
+                1. <div theme=default><div theme=dark><button></></></> 的情形中，default 和 dark 会同时作用而不是选层次最近的那个作用，将导致2个主题前后被应用到一个元素
+                2. 由于总是从容器出发，<button theme=dark></> 也无法生效
+        */ 
+       $(()=>{
+           let jcss1 = $('#jcss1').compileJcss();
+           jcss1.attach({width:100});
+       });
+    </script>
+</body>
+
+</html>

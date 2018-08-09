@@ -1,0 +1,38 @@
+<html>
+
+
+<body>
+
+
+</body>
+<script>
+
+    class A{
+        constructor(){
+            this.foo = 'a'
+            console.log('a')
+            console.log(this.constructor == A)
+        }
+
+        add(){
+            
+        }
+    }
+
+    class B extends A{
+
+        constructor(){
+            super()    
+            console.log('b')
+            console.log(this.constructor == A)        
+        }
+    }
+
+    console.log('create a')
+    var a = new A()
+    console.log('create b')
+    var b = new B()
+
+</script>
+
+</html>

@@ -32,45 +32,15 @@ function Molecule(container) {
 	 * @type {HTMLElement}
 	 */
     this.el = container;
+    this.$el = jQuery(container);
+    if (container == null) debugger;
 
-    this.isMolecule = true;
-    
-    /**
-	 * 是否为某种类型的 molecule
-	 * 
-     * @param molecule {string|object} 
-	 * @returns {bool}
-	 */
-    this.is = function(molecule){
-    	if(typeof molecule == 'string'){
-            return this.moleculePrototype.moleculeName == molecule
-        } else if (typeof molecule == 'function'){
-            return this.moleculePrototype.moleculeConstructor == molecule
-        } else if(molecule instanceof HTMLElement){
-            return this.el == molecule
-        } else if(typeof molecule == 'object'){
-            return molecule == this
-        }
-    }
-    
     /**
 	 * molecule 所附着的 html 元素的 jQuery 包装
 	 * 
 	 * @type {jQueryElement}
 	 */
-    this.$el = jQuery(container);
-    if (container == null) debugger;
     var me = this;
-
-    this.onDOMNodeRemoved = function() {
-            if (me.dispose) { // 对于不需要关注 dispose 活动的 molecule，无需自动 dispose
-                if (me.$el.closest('[molecule-auto-dispose=false]').length) return; // 不自动删除
-
-                me.dispose();
-                if (Molecule.debug) console.info(this.id, ' removed')
-                Molecule.removeInstance(this);
-            }
-        }
 	/**
 	 * molecule原型
 	 * 
@@ -84,14 +54,44 @@ function Molecule(container) {
     this.$el.on('blur', function(ele) {
         me.blur && me.onblur();
     });
+}
 
-    /**
-	 * 移除 molecule
-	 */
-    this.release = function() {
-        if (this.dispose) this.dispose();
+Molecule.prototype = { isMolecule: true }
+
+Molecule.prototype.onDOMNodeRemoved = function() {
+    if (this.dispose) { // 对于不需要关注 dispose 活动的 molecule，无需自动 dispose
+        if (this.$el.closest('[molecule-auto-dispose=false]').length) return; // 不自动删除
+
+        this.dispose();
+        if (Molecule.debug) console.info(this.id, ' removed')
         Molecule.removeInstance(this);
     }
+}
+
+/**
+ * 是否为某种类型的 molecule
+ * 
+ * @param molecule {string|object} 
+ * @returns {bool}
+ */
+Molecule.prototype.is = function(molecule){
+    if(typeof molecule == 'string'){
+        return this.moleculePrototype.moleculeName == molecule
+    } else if (typeof molecule == 'function'){
+        return this.moleculePrototype.moleculeConstructor == molecule
+    } else if(molecule instanceof HTMLElement){
+        return this.el == molecule
+    } else if(typeof molecule == 'object'){
+        return molecule == this
+    }
+}
+
+/**
+* 移除 molecule
+*/
+Molecule.prototype.release = function() {
+   if (this.dispose) this.dispose();
+   Molecule.removeInstance(this);
 }
 
 Molecule.removeInstance = function(instance) {
@@ -106,6 +106,10 @@ Molecule.removeInstance = function(instance) {
         delete container['moleculeInstance'];
     }
 };
+
+Molecule.prototype.moleculeName = function(){
+    return this.moleculePrototype.moleculeName;
+}
 
 +
 (function($) {

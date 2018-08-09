@@ -22,6 +22,11 @@ import createGenerateClassName from '/jslib/@material-ui-molecule/core/styles/cr
 
 export const defaultTheme = createMuiTheme();
 
+export const themes = window.THEMES || {}
+
+themes['default'] = defaultTheme;
+defaultTheme.name = 'default';
+
 function jssPreset() {
     return {
         plugins: [jssGlobal.default(), jssNested.default(), jssCamelCase.default(), jssDefaultUnit.default(), jssVendorPrefixer.default(), jssPropsSort.default()]
@@ -46,5 +51,10 @@ export function attachJss(styles, meta, name, theme=defaultTheme){
     sheet.attach()
     // console.log(sheet.classes)
     return sheet.classes
-}
+};
 
+Molecule.prototype.attachJss = function(styles){
+    const themeName = this.$el.closest('[theme]]').attr('theme') || 'default';
+    const theme = themes[themeName] || defaultTheme;
+    return attachJss(styles, this.moleculeName(), this.moleculeName(), theme);
+}
