@@ -192,8 +192,6 @@ export const styles = theme => ({
 });
 
 
-const defaultClasses = attachJss(styles(defaultTheme), 'MuiButton', 'MuiButton')
-
 export default class Button extends ButtonBase {
 
   constructor(el) {
@@ -210,7 +208,7 @@ export default class Button extends ButtonBase {
 
   prepareClasses(){
     super.prepareClasses();
-    this.buttonClasses = defaultClasses;
+    this.buttonClasses = this.attachJss(styles, 'MuiButton', 'MuiButton');
   }
 
   render(){

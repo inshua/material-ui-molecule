@@ -46,8 +46,6 @@ export const styles = {
 };
 
 
-const defaultClasses = attachJss(styles, 'MuiButtonBase', 'MuiButtonBase')
-
 /**
  * `ButtonBase` contains as few styles as possible.
  * It aims to be a simple building block for creating a button.
@@ -200,7 +198,7 @@ export class ButtonBase extends ReactComponent {
   }
 
   prepareClasses(){
-    this.buttonBaseClasses = defaultClasses;
+    this.buttonBaseClasses = this.attachJss(styles, 'MuiButtonBase', 'MuiButtonBase');
   }
 
   render() {
@@ -250,7 +248,7 @@ export class ButtonBase extends ReactComponent {
       }
     } else {
       if (!this.ripple) {
-        this.ripple = $(document.createElement('span')).attr('molecule', 'mui.TouchRipple').appendTo(this.el).molecule();
+        this.ripple = $(document.createElement('span')).attr('m', 'mui.TouchRipple').appendTo(this.el).molecule();
       }
     }
   }

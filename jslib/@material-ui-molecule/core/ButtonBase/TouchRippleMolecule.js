@@ -94,8 +94,6 @@ export const styles = theme => ({
 });
 
 
-const  defaultClasses = attachJss(styles(defaultTheme), 'MuiTouchRipple', 'MuiTouchRipple')
-
 export default class TouchRipple extends ReactComponent {
     constructor(el) {
         super(el)
@@ -124,7 +122,7 @@ export default class TouchRipple extends ReactComponent {
     }
     
     prepareClasses(){
-        this.props.classes = defaultClasses;
+        this.props.classes = this.attachJss(styles, 'MuiTouchRipple', 'MuiTouchRipple');
     }
 
     render(){
@@ -240,7 +238,7 @@ export default class TouchRipple extends ReactComponent {
             cb
         } = params;
         let ripple = $(document.createElement('span')).setAttrs({
-            molecule: 'mui.Ripple',
+            m: 'mui.Ripple',
             props: JSON.stringify({
                 exitTimeout: DURATION,
                 enterTimeout: DURATION,
@@ -285,6 +283,5 @@ export default class TouchRipple extends ReactComponent {
 
 
 TouchRipple.defaultProps = {
-    classes: defaultClasses,
     center: false,
 };

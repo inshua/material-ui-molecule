@@ -9,17 +9,6 @@ import createMuiTheme from '/jslib/@material-ui-molecule/core/styles/createMuiTh
 import deepmerge from '/jslib/deepmerge/dist/umd.js'; 
 import createGenerateClassName from '/jslib/@material-ui-molecule/core/styles/createGenerateClassName.js';
 
-// let defaultTheme;
-
-// function getDefaultTheme() {
-//     if (defaultTheme) {
-//         return defaultTheme;
-//     }
-
-//     defaultTheme = createMuiTheme();
-//     return defaultTheme;
-// } // Link a style sheet with a component
-
 export const defaultTheme = createMuiTheme();
 
 export const themes = window.THEMES || {}
@@ -39,7 +28,13 @@ const generateClassName = createGenerateClassName();
 const sheetOptions = {generateClassName}
 const stylesCreatorSavedOptions = {index:-99999999997}
 
+const loadedClasses = {};
+
 export function attachJss(styles, meta, name, theme=defaultTheme){
+    const key = `${theme.name}-${meta}-${name}`;
+    const exist = loadedClasses[key]
+    if(exist) return exist;
+
     if(typeof styles == 'function'){
         styles = styles(theme);
     }
@@ -52,12 +47,14 @@ export function attachJss(styles, meta, name, theme=defaultTheme){
         name
     }));
     sheet.attach()
-    // console.log(sheet.classes)
+    
+    loadedClasses[key] = sheet.classes;
+
     return sheet.classes
 };
 
-Molecule.prototype.attachJss = function(styles){
+Molecule.prototype.attachJss = function(styles, meta, name){
     const themeName = this.$el.closest('[theme]').attr('theme') || 'default';
     const theme = themes[themeName] || defaultTheme;
-    return attachJss(styles, this.moleculeName(), this.moleculeName(), theme);
+    return attachJss(styles, meta, name, theme);
 }

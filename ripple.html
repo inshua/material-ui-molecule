@@ -24,7 +24,6 @@
 
     <script src="jslib/jquery.attrs.js"></script>
     <script src="jslib/@material-ui-molecule/jss.js" type="module"></script>
-
     <script src="jslib/molecule.js"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -32,7 +31,7 @@
 
 <body>
     <template>
-        <span molecule-def=mui.TouchRipple>
+        <span m-def=mui.TouchRipple>
             <script constructor module="/jslib/@material-ui-molecule/core/ButtonBase/TouchRippleMolecule.js">
                 // setTimeout(()=>{
                 //     this.start({}, {}, ()=>{console.log('ripple start')});
@@ -42,12 +41,12 @@
                 // }, 1000);
             </script>
         </span>
-        <span molecule-def=mui.Ripple>
+        <span m-def=mui.Ripple>
             <span></span>
             <script constructor module="/jslib/@material-ui-molecule/core/ButtonBase/RippleMolecule.js">
             </script>
         </span>
-        <button molecule-def=mui.Button>
+        <button m-def=mui.Button>
             <span>
                 <molecule-placeholder></molecule-placeholder>
             </span>
@@ -55,32 +54,32 @@
             </script>
         </button>
 
-        <div molecule-def=TextButtons>
-            <button molecule=mui.Button>Default</Button>
-            <button molecule=mui.Button color="primary">
+        <div m-def=TextButtons>
+            <button m=mui.Button>Default</Button>
+            <button m=mui.Button color="primary">
                 Primary
             </button>
-            <button molecule=mui.Button color="secondary">
+            <button m=mui.Button color="secondary">
                 Secondary
             </button>
-            <button molecule=mui.Button disabled>
+            <button m=mui.Button disabled>
                 Disabled
             </button>
-            <a molecule=mui.Button href="#text-buttons">
+            <a m=mui.Button href="#text-buttons">
                 Link
             </a>
             <input accept="image/*" id="flat-button-file" multiple type="file" />
             <label for="flat-button-file">
-                <span molecule=mui.Button>
+                <span m=mui.Button>
                     Upload
                 </span>
             </label>
             <script constructor>
                 const styles = theme => ({
-                    [`@global [molecule-obj=${this.moleculeName()}] button`]: {
+                    [`@global [m-inst=${this.moleculeName()}] button`]: {
                         margin: theme.spacing.unit,
                     },
-                    [`@global [molecule-obj=${this.moleculeName()}] input`]: {
+                    [`@global [m-inst=${this.moleculeName()}] input`]: {
                         display: 'none',
                     },
                 });
@@ -99,32 +98,32 @@
             </script>
         </div>
 
-        <div molecule-def=OutlinedButtons>
-            <button molecule=mui.Button variant="outlined">Default</Button>
-            <button molecule=mui.Button color="primary" variant="outlined">
+        <div m-def=OutlinedButtons>
+            <button m=mui.Button variant="outlined">Default</Button>
+            <button m=mui.Button color="primary" variant="outlined">
                 Primary
             </button>
-            <button molecule=mui.Button color="secondary" variant="outlined">
+            <button m=mui.Button color="secondary" variant="outlined">
                 Secondary
             </button>
-            <button molecule=mui.Button disabled variant="outlined">
+            <button m=mui.Button disabled variant="outlined">
                 Disabled
             </button>
-            <a molecule=mui.Button href="#outlined-buttons" variant="outlined">
+            <a m=mui.Button href="#outlined-buttons" variant="outlined">
                 Link
             </a>
             <input accept="image/*" id="flat-button-file" multiple type="file" />
             <label for="flat-button-file">
-                <span molecule=mui.Button variant="outlined">
+                <span m=mui.Button variant="outlined">
                     Upload
                 </span>
             </label>
             <script constructor>
                 const styles = theme => ({
-                    [`@global [molecule-obj=${this.moleculeName()}] button`]: {
+                    [`@global [m-inst=${this.moleculeName()}] button`]: {
                         margin: theme.spacing.unit,
                     },
-                    [`@global [molecule-obj=${this.moleculeName()}] input`]: {
+                    [`@global [m-inst=${this.moleculeName()}] input`]: {
                         display: 'none',
                     },
                 });
@@ -135,22 +134,36 @@
 
     <!-- <span molecule=mui.TouchRipple rippleX=200 rippleY=200 rippleSize=200>TouchRipple</span> -->
     <!-- <input value="abcd">
-    <button molecule=mui.Button>
+    <button m=mui.Button>
         CLICK ME
     </button>
 
-    <button molecule=mui.Button color=primary variant="contained">
+    <button m=mui.Button color=primary variant="contained">
         CLICK ME
     </button> -->
 
+    <div theme="dark" style="background: darkslategray">
+        <div m=TextButtons>
 
-    <div molecule=TextButtons>
-
+        </div>
     </div>
 
-    <div molecule=OutlinedButtons>
+    <div m=OutlinedButtons>
 
     </div>
 </body>
-
+<script>
+    (async function(){
+        console.log('add dark theme')
+        const jss = await import('/jslib/@material-ui-molecule/jss.js');
+        const createMuiTheme = await import('/jslib/@material-ui-molecule/core/styles/createMuiTheme.js');
+        const theme = createMuiTheme.default({
+            palette: {
+                type: 'dark', // Switching the dark mode on is a single property value change.
+            },
+        });
+        jss.themes['dark'] = theme;
+        console.log('dark theme added')
+    })();
+</script>
 </html>
