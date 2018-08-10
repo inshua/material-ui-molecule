@@ -109,10 +109,9 @@ Molecule.removeInstance = function(instance) {
 
 Molecule.prototype.moleculeName = function(){
     return this.moleculePrototype.moleculeName;
-}
+};
 
-+
-(function($) {
++(function($) {
     $.fn.molecule = function() {
         return Molecule.of(this);
     };

@@ -2,48 +2,59 @@ import _objectSpread from  "/jslib/@babel/runtime/helpers/builtin/objectSpread.j
 import _objectWithoutProperties from "/jslib/@babel/runtime/helpers/builtin/objectWithoutProperties.js";
 import deepmerge from '/jslib/deepmerge/dist/umd.js'; // < 1kb payload overhead when lodash/merge is > 3kb.
 import warning from '/jslib/warning/browser.js';
+import isPlainObject from '/jslib/is-plain-object/index.js';
 
 import createTypography from './createTypography.js';
 import createBreakpoints from './createBreakpoints.js';
 import createPalette from './createPalette.js';
 import createMixins from './createMixins.js';
 import shadows from './shadows.js';
+import shape from './shape.js';
 import transitions from './transitions.js';
 import zIndex from './zIndex.js';
 import spacing from './spacing.js';
 
 function createMuiTheme(options = {}) {
-
   const {
-    palette: paletteInput = {},
     breakpoints: breakpointsInput = {},
     mixins: mixinsInput = {},
+    palette: paletteInput = {},
+    shadows: shadowsInput,
     typography: typographyInput = {},
-    shadows: shadowsInput
-  } = options,
-        other = _objectWithoutProperties(options, ["palette", "breakpoints", "mixins", "typography", "shadows"]);
+    ...other
+  } = options;
 
   const palette = createPalette(paletteInput);
   const breakpoints = createBreakpoints(breakpointsInput);
 
-  const muiTheme = _objectSpread({
+  const muiTheme = {
     breakpoints,
     direction: 'ltr',
     mixins: createMixins(breakpoints, spacing, mixinsInput),
-    overrides: {},
-    // Inject custom styles
+    overrides: {}, // Inject custom styles
     palette,
-    props: {},
-    // Inject custom properties
+    props: {}, // Inject custom properties
     shadows: shadowsInput || shadows,
-    typography: createTypography(palette, typographyInput)
-  }, deepmerge({
-    transitions,
-    spacing,
-    zIndex
-  }, other));
+    typography: createTypography(palette, typographyInput),
+    ...deepmerge(
+      {
+        shape,
+        spacing,
+        transitions,
+        zIndex,
+      },
+      other,
+      {
+        isMergeableObject: isPlainObject,
+      },
+    ),
+  };
 
-  process.env.NODE_ENV !== "production" ? warning(muiTheme.shadows.length === 25, 'Material-UI: the shadows array provided to createMuiTheme should support 25 elevations.') : void 0;
+  warning(
+    muiTheme.shadows.length === 25,
+    'Material-UI: the shadows array provided to createMuiTheme should support 25 elevations.',
+  );
+
   return muiTheme;
 }
 

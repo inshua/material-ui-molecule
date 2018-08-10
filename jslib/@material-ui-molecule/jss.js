@@ -40,6 +40,9 @@ const sheetOptions = {generateClassName}
 const stylesCreatorSavedOptions = {index:-99999999997}
 
 export function attachJss(styles, meta, name, theme=defaultTheme){
+    if(typeof styles == 'function'){
+        styles = styles(theme);
+    }
     const sheet = jss.default.createStyleSheet(styles, _objectSpread({
         meta,
         classNamePrefix: meta,
@@ -54,7 +57,7 @@ export function attachJss(styles, meta, name, theme=defaultTheme){
 };
 
 Molecule.prototype.attachJss = function(styles){
-    const themeName = this.$el.closest('[theme]]').attr('theme') || 'default';
+    const themeName = this.$el.closest('[theme]').attr('theme') || 'default';
     const theme = themes[themeName] || defaultTheme;
     return attachJss(styles, this.moleculeName(), this.moleculeName(), theme);
 }

@@ -26,6 +26,8 @@
     <script src="jslib/@material-ui-molecule/jss.js" type="module"></script>
 
     <script src="jslib/molecule.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
 
 <body>
@@ -53,63 +55,100 @@
             </script>
         </button>
 
-        <div molecule-def=Sample1>
-            <button molecule=mui.Button classname={classes.button}>Default</Button>
-            <!-- <Button color="primary" className={classes.button}>
+        <div molecule-def=TextButtons>
+            <button molecule=mui.Button>Default</Button>
+            <button molecule=mui.Button color="primary">
                 Primary
-            </Button>
-            <Button color="secondary" className={classes.button}>
+            </button>
+            <button molecule=mui.Button color="secondary">
                 Secondary
-            </Button>
-            <Button disabled className={classes.button}>
+            </button>
+            <button molecule=mui.Button disabled>
                 Disabled
-            </Button>
-            <Button href="#text-buttons" className={classes.button}>
+            </button>
+            <a molecule=mui.Button href="#text-buttons">
                 Link
-            </Button>
-            <input accept="image/*" className={classes.input} id="flat-button-file" multiple type="file" />
-            <label htmlFor="flat-button-file">
-                <Button component="span" className={classes.button}>
+            </a>
+            <input accept="image/*" id="flat-button-file" multiple type="file" />
+            <label for="flat-button-file">
+                <span molecule=mui.Button>
                     Upload
-                </Button>
-            </label> -->
-            <style>
-                .sample1[theme=$$theme.name$$] {
-                    .button {
-                        margin: $$theme.spacing.unit$$
-                    }
-                    .sample1 > input{
-                        display: none;
-                    }
-                }
-            </style>
+                </span>
+            </label>
             <script constructor>
                 const styles = theme => ({
-                    button: {
+                    [`@global [molecule-obj=${this.moleculeName()}] button`]: {
                         margin: theme.spacing.unit,
                     },
-                    input: {
+                    [`@global [molecule-obj=${this.moleculeName()}] input`]: {
                         display: 'none',
                     },
                 });
-                const classes = this.attachJss(styles);
+                this.attachJss(styles);
+                // const styles = theme => ({
+                //     button: {
+                //         margin: theme.spacing.unit,
+                //     },
+                //     input: {
+                //         display: 'none',
+                //     },
+                // });
+                // let classes = this.attachJss(styles);
+                // this.$el.find('button').addClass(classes.button);
+                // this.$el.find('input').addClass(classes.input);
+            </script>
+        </div>
 
+        <div molecule-def=OutlinedButtons>
+            <button molecule=mui.Button variant="outlined">Default</Button>
+            <button molecule=mui.Button color="primary" variant="outlined">
+                Primary
+            </button>
+            <button molecule=mui.Button color="secondary" variant="outlined">
+                Secondary
+            </button>
+            <button molecule=mui.Button disabled variant="outlined">
+                Disabled
+            </button>
+            <a molecule=mui.Button href="#outlined-buttons" variant="outlined">
+                Link
+            </a>
+            <input accept="image/*" id="flat-button-file" multiple type="file" />
+            <label for="flat-button-file">
+                <span molecule=mui.Button variant="outlined">
+                    Upload
+                </span>
+            </label>
+            <script constructor>
+                const styles = theme => ({
+                    [`@global [molecule-obj=${this.moleculeName()}] button`]: {
+                        margin: theme.spacing.unit,
+                    },
+                    [`@global [molecule-obj=${this.moleculeName()}] input`]: {
+                        display: 'none',
+                    },
+                });
+                this.attachJss(styles);
             </script>
         </div>
     </template>
 
     <!-- <span molecule=mui.TouchRipple rippleX=200 rippleY=200 rippleSize=200>TouchRipple</span> -->
-    <input value="abcd">
+    <!-- <input value="abcd">
     <button molecule=mui.Button>
         CLICK ME
     </button>
 
     <button molecule=mui.Button color=primary variant="contained">
         CLICK ME
-    </button>
+    </button> -->
 
 
-    <div molecule=Sample1>
+    <div molecule=TextButtons>
+
+    </div>
+
+    <div molecule=OutlinedButtons>
 
     </div>
 </body>

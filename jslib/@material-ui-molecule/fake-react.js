@@ -64,3 +64,5 @@ export class ReactComponent{
         
     }
 }
+
+Object.assign(ReactComponent.prototype, Molecule.prototype);

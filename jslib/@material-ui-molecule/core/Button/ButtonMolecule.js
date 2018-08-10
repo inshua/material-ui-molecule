@@ -10,94 +10,105 @@ import { defaultTheme, attachJss } from "../../jss.js";
 import deepmerge from '/jslib/deepmerge/dist/umd.js'; 
 
 export const styles = theme => ({
-  root: _objectSpread({}, theme.typography.button, {
-    lineHeight: '1.4em',
-    // Improve readability for multiline button.
+  /* Styles applied to the root element. */
+  root: {
+    ...theme.typography.button,
+    lineHeight: '1.4em', // Improve readability for multiline button.
     boxSizing: 'border-box',
-    minWidth: theme.spacing.unit * 11,
+    minWidth: 64,
     minHeight: 36,
-    padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
-    borderRadius: 4,
+    padding: '8px 16px',
+    borderRadius: theme.shape.borderRadius,
     color: theme.palette.text.primary,
     transition: theme.transitions.create(['background-color', 'box-shadow'], {
-      duration: theme.transitions.duration.short
+      duration: theme.transitions.duration.short,
     }),
     '&:hover': {
       textDecoration: 'none',
       backgroundColor: fade(theme.palette.text.primary, theme.palette.action.hoverOpacity),
       // Reset on touch devices, it doesn't add specificity
       '@media (hover: none)': {
-        backgroundColor: 'transparent'
+        backgroundColor: 'transparent',
       },
       '&$disabled': {
-        backgroundColor: 'transparent'
-      }
+        backgroundColor: 'transparent',
+      },
     },
     '&$disabled': {
-      color: theme.palette.action.disabled
-    }
-  }),
+      color: theme.palette.action.disabled,
+    },
+  },
+  /* Styles applied to the span element that wraps the children. */
   label: {
-    width: '100%',
+    width: '100%', // assure the correct width for iOS Safari
     display: 'inherit',
     alignItems: 'inherit',
-    justifyContent: 'inherit'
+    justifyContent: 'inherit',
   },
+  /* Styles applied to the root element if `variant="text"`. */
+  text: {},
+  /* Styles applied to the root element if `variant="text"` and `color="primary"`. */
   textPrimary: {
     color: theme.palette.primary.main,
     '&:hover': {
       backgroundColor: fade(theme.palette.primary.main, theme.palette.action.hoverOpacity),
       // Reset on touch devices, it doesn't add specificity
       '@media (hover: none)': {
-        backgroundColor: 'transparent'
-      }
-    }
+        backgroundColor: 'transparent',
+      },
+    },
   },
+  /* Styles applied to the root element if `variant="text"` and `color="secondary"`. */
   textSecondary: {
     color: theme.palette.secondary.main,
     '&:hover': {
       backgroundColor: fade(theme.palette.secondary.main, theme.palette.action.hoverOpacity),
       // Reset on touch devices, it doesn't add specificity
       '@media (hover: none)': {
-        backgroundColor: 'transparent'
-      }
-    }
+        backgroundColor: 'transparent',
+      },
+    },
   },
+  /* Styles applied to the root element for backwards compatibility with legacy variant naming. */
   flat: {},
+  /* Styles applied to the root element for backwards compatibility with legacy variant naming. */
   flatPrimary: {},
+  /* Styles applied to the root element for backwards compatibility with legacy variant naming. */
   flatSecondary: {},
+  /* Styles applied to the root element if `variant="outlined"`. */
   outlined: {
-    border: `1px solid ${theme.palette.type === 'light' ? 'rgba(0, 0, 0, 0.23)' : 'rgba(255, 255, 255, 0.23)'}`
+    border: `1px solid ${
+      theme.palette.type === 'light' ? 'rgba(0, 0, 0, 0.23)' : 'rgba(255, 255, 255, 0.23)'
+    }`,
   },
-  colorInherit: {
-    color: 'inherit'
-  },
+  /* Styles applied to the root element if `variant="[contained | fab]"`. */
   contained: {
     color: theme.palette.getContrastText(theme.palette.grey[300]),
     backgroundColor: theme.palette.grey[300],
     boxShadow: theme.shadows[2],
     '&$focusVisible': {
-      boxShadow: theme.shadows[6]
+      boxShadow: theme.shadows[6],
     },
     '&:active': {
-      boxShadow: theme.shadows[8]
+      boxShadow: theme.shadows[8],
     },
     '&$disabled': {
       color: theme.palette.action.disabled,
       boxShadow: theme.shadows[0],
-      backgroundColor: theme.palette.action.disabledBackground
+      backgroundColor: theme.palette.action.disabledBackground,
     },
     '&:hover': {
       backgroundColor: theme.palette.grey.A100,
       // Reset on touch devices, it doesn't add specificity
       '@media (hover: none)': {
-        backgroundColor: theme.palette.grey[300]
+        backgroundColor: theme.palette.grey[300],
       },
       '&$disabled': {
-        backgroundColor: theme.palette.action.disabledBackground
-      }
-    }
+        backgroundColor: theme.palette.action.disabledBackground,
+      },
+    },
   },
+  /* Styles applied to the root element if `variant="[contained | fab]"` and `color="primary"`. */
   containedPrimary: {
     color: theme.palette.primary.contrastText,
     backgroundColor: theme.palette.primary.main,
@@ -105,10 +116,11 @@ export const styles = theme => ({
       backgroundColor: theme.palette.primary.dark,
       // Reset on touch devices, it doesn't add specificity
       '@media (hover: none)': {
-        backgroundColor: theme.palette.primary.main
-      }
-    }
+        backgroundColor: theme.palette.primary.main,
+      },
+    },
   },
+  /* Styles applied to the root element if `variant="[contained | fab]"` and `color="secondary"`. */
   containedSecondary: {
     color: theme.palette.secondary.contrastText,
     backgroundColor: theme.palette.secondary.main,
@@ -116,46 +128,67 @@ export const styles = theme => ({
       backgroundColor: theme.palette.secondary.dark,
       // Reset on touch devices, it doesn't add specificity
       '@media (hover: none)': {
-        backgroundColor: theme.palette.secondary.main
-      }
-    }
+        backgroundColor: theme.palette.secondary.main,
+      },
+    },
   },
-  raised: {},
-  raisedPrimary: {},
-  raisedSecondary: {},
-  focusVisible: {},
-  disabled: {},
+  /* Styles applied to the root element for backwards compatibility with legacy variant naming. */
+  raised: {}, // legacy
+  /* Styles applied to the root element for backwards compatibility with legacy variant naming. */
+  raisedPrimary: {}, // legacy
+  /* Styles applied to the root element for backwards compatibility with legacy variant naming. */
+  raisedSecondary: {}, // legacy
+  /* Styles applied to the root element if `variant="[fab | extendedFab]"`. */
   fab: {
     borderRadius: '50%',
     padding: 0,
     minWidth: 0,
     width: 56,
-    fontSize: 24,
     height: 56,
     boxShadow: theme.shadows[6],
     '&:active': {
-      boxShadow: theme.shadows[12]
-    }
+      boxShadow: theme.shadows[12],
+    },
   },
+  /* Styles applied to the root element if `variant="extendedFab"`. */
+  extendedFab: {
+    borderRadius: 48 / 2,
+    padding: '0 16px',
+    width: 'auto',
+    minWidth: 48,
+    height: 48,
+  },
+  /* Styles applied to the ButtonBase root element if the button is keyboard focused. */
+  focusVisible: {},
+  /* Styles applied to the root element if `disabled={true}`. */
+  disabled: {},
+  /* Styles applied to the root element if `color="inherit"`. */
+  colorInherit: {
+    color: 'inherit',
+  },
+  /* Styles applied to the root element if `size="mini"` & `variant="[fab | extendedFab]"`. */
   mini: {
     width: 40,
-    height: 40
+    height: 40,
   },
+  /* Styles applied to the root element if `size="small"`. */
   sizeSmall: {
-    padding: `${theme.spacing.unit - 1}px ${theme.spacing.unit}px`,
-    minWidth: theme.spacing.unit * 8,
+    padding: '7px 8px',
+    minWidth: 64,
     minHeight: 32,
-    fontSize: theme.typography.pxToRem(13)
+    fontSize: theme.typography.pxToRem(13),
   },
+  /* Styles applied to the root element if `size="large"`. */
   sizeLarge: {
-    padding: `${theme.spacing.unit}px ${theme.spacing.unit * 3}px`,
-    minWidth: theme.spacing.unit * 14,
+    padding: '8px 24px',
+    minWidth: 112,
     minHeight: 40,
-    fontSize: theme.typography.pxToRem(15)
+    fontSize: theme.typography.pxToRem(15),
   },
+  /* Styles applied to the root element if `fullWidth={true}`. */
   fullWidth: {
-    width: '100%'
-  }
+    width: '100%',
+  },
 });
 
 

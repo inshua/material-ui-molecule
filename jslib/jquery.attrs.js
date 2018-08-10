@@ -62,6 +62,7 @@ function dash2Camel( name ) {
                 }
             } else {
                 let n = a.name;
+                if(n == 'class') n = 'className';
                 result[dash2Camel(n)] = booleanProps[n] ? this.prop(n) : typed(a.value);
             }
         }
@@ -72,6 +73,7 @@ function dash2Camel( name ) {
         for(let n of Object.keys(attrs)){
             let v = attrs[n];
             if(v != null){
+                if(n == 'className') n == 'class';
                 n = camel2Dash(n)
                 if(booleanProps[n]){
                     this.prop(n, v)
