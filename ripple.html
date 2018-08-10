@@ -32,31 +32,22 @@
 <body>
     <template>
         <span m-def=mui.TouchRipple>
-            <script constructor module="/jslib/@material-ui-molecule/core/ButtonBase/TouchRippleMolecule.js">
-                // setTimeout(()=>{
-                //     this.start({}, {}, ()=>{console.log('ripple start')});
-                //     setTimeout(()=>{
-                //         this.stop({}, ()=>{console.log('ripple stopped')});
-                //     }, 1000)
-                // }, 1000);
-            </script>
+            <script constructor module="/jslib/@material-ui-molecule/core/ButtonBase/TouchRippleMolecule.js"></script>
         </span>
         <span m-def=mui.Ripple>
             <span></span>
-            <script constructor module="/jslib/@material-ui-molecule/core/ButtonBase/RippleMolecule.js">
-            </script>
+            <script constructor module="/jslib/@material-ui-molecule/core/ButtonBase/RippleMolecule.js"></script>
         </span>
         <button m-def=mui.Button>
             <span>
                 <molecule-placeholder></molecule-placeholder>
             </span>
-            <script constructor module="/jslib/@material-ui-molecule/core/Button/ButtonMolecule.js">
-            </script>
+            <script constructor module="/jslib/@material-ui-molecule/core/Button/ButtonMolecule.js"></script>
         </button>
 
         <div m-def=TextButtons>
-            <button m=mui.Button>Default</Button>
-            <button m=mui.Button color="primary">
+            <button m=mui.Button watch-attr>Default</Button>
+            <button m=mui.Button color="primary" watch-attr>
                 Primary
             </button>
             <button m=mui.Button color="secondary">
@@ -75,26 +66,26 @@
                 </span>
             </label>
             <script constructor>
-                const styles = theme => ({
-                    [`@global [m-inst=${this.moleculeName()}] button`]: {
-                        margin: theme.spacing.unit,
-                    },
-                    [`@global [m-inst=${this.moleculeName()}] input`]: {
-                        display: 'none',
-                    },
-                });
-                this.attachJss(styles);
                 // const styles = theme => ({
-                //     button: {
+                //     [`@global [m-inst=${this.moleculeName()}] button`]: {
                 //         margin: theme.spacing.unit,
                 //     },
-                //     input: {
+                //     [`@global [m-inst=${this.moleculeName()}] input`]: {
                 //         display: 'none',
                 //     },
                 // });
-                // let classes = this.attachJss(styles);
-                // this.$el.find('button').addClass(classes.button);
-                // this.$el.find('input').addClass(classes.input);
+                // this.attachJss(styles);
+                const styles = theme => ({
+                    button: {
+                        margin: [theme.spacing.unit, '!important'],     // 比按钮的 style 创建的早，会被覆盖
+                    },
+                    input: {
+                        display: 'none',
+                    },
+                });
+                let classes = this.attachJss(styles);
+                this.$el.find('button').attr('m-class', classes.button);
+                this.$el.find('input').addClass(classes.input);
             </script>
         </div>
 

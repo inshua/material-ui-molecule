@@ -214,7 +214,7 @@ export default class Button extends ButtonBase {
   render(){
     const classes = this.buttonClasses;
     const {
-      className: classNameProp,
+      mClass: classNameProp,
       color,
       disabled,
       disableFocusRipple,
@@ -224,13 +224,13 @@ export default class Button extends ButtonBase {
       size,
       variant
     } = this.props,
-    other = _objectWithoutProperties(this.props, ["children", "classes", "className", "color", "disabled", "disableFocusRipple", "fullWidth", "focusVisibleClassName", "mini", "size", "variant"]);
+    other = _objectWithoutProperties(this.props, ["children", "classes", "mClass", "className", "color", "disabled", "disableFocusRipple", "fullWidth", "focusVisibleClassName", "mini", "size", "variant"]);
     
-    if(this.constructor == Button){
+    if(this.constructor == Button){  // 用户设置的属性已经收集到 userProps，现在清空 class
       this.el.className == ''
     }
     this.props.focusRipple = !disableFocusRipple;   // 对外暴露的是 disabledFocusRipple, 此值默认为 false
-    super.render();
+    super.render();   // 
 
     const fab = variant === 'fab';
     const contained = variant === 'contained' || variant === 'raised';
@@ -257,7 +257,7 @@ export default class Button extends ButtonBase {
       [classes.fullWidth]: fullWidth
     }, classNameProp);
 
-    this.el.className = className + ' ' + this.el.className;
+    this.$el.addClass(className);
     this.$el.setAttrs(other);
     this.$el.find('span')[0].className = classes.label;
   }

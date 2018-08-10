@@ -107,6 +107,8 @@ Molecule.removeInstance = function(instance) {
     }
 };
 
+Molecule.prototype.handleAttributeChange = jQuery.noop;
+
 Molecule.prototype.moleculeName = function(){
     return this.moleculePrototype.moleculeName;
 };
@@ -641,8 +643,7 @@ jQuery(document).on('DOMContentLoaded', async function(){
 	
 	jQuery(document).on('DOMNodeInserted', function(e) {
 	    var target = (e.originalEvent.target || e.target);
-	    if (target.tagName) { // 可能嵌套于未声明为 molecule的元素中，<div><div
-								// molecule=...></div></div>, 仅能收到外层 div 的事件
+	    if (target.tagName) { // 可能嵌套于未声明为 molecule的元素中，<div><div m=...></div></div>, 仅能收到外层 div 的事件
 	        if (Molecule._scanningEle && jQuery.contains(Molecule._scanningEle, target)) return; // 正在扫描父元素，早晚会扫到它
 	        if (Molecule.debug) console.info('DOMNodeInserted ', e.target);
 	        Molecule.scanMolecules(target);
@@ -652,8 +653,7 @@ jQuery(document).on('DOMContentLoaded', async function(){
 	
 	jQuery(document).on('DOMNodeRemoved', function(e) {
 	    var target = (e.originalEvent.target || e.target);
-	    if (target.tagName) { // 可能嵌套于未声明为 molecule的元素中，<div><div
-								// molecule=...></div></div>, 仅能收到外层 div 的事件
+	    if (target.tagName) { // 可能嵌套于未声明为 molecule的元素中，<div><div m=...></div></div>, 仅能收到外层 div 的事件
 	        if (target.moleculeInstance) {
 	            target.moleculeInstance && target.moleculeInstance.onDOMNodeRemoved();
 	        }
@@ -661,5 +661,25 @@ jQuery(document).on('DOMContentLoaded', async function(){
 	        	ele.moleculeInstance && ele.moleculeInstance.onDOMNodeRemoved();
 	        });
 	    }
-	});
+    });
+    
+    $(function observeThemeChange(){
+        var config = { attributes: true, childList: true, subtree: true, attributeOldValue : true };
+
+        var callback = function(mutationsList) {
+            for(var mutation of mutationsList) {
+                if (mutation.type == 'attributes') {
+                    if(mutation.target.moleculeInstance){
+                        const inst = mutation.target.moleculeInstance;
+                        // if(inst.handleAttributeChange) 
+                        inst.handleAttributeChange(mutation.attributeName, mutation);
+                    }                    
+                }
+            }
+        };
+
+        var observer = new MutationObserver(callback);
+        observer.observe(document.body, config);
+        // observer.disconnect();
+    });
 });

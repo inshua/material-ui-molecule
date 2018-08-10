@@ -56,5 +56,5 @@ export function attachJss(styles, meta, name, theme=defaultTheme){
 Molecule.prototype.attachJss = function(styles, meta, name){
     const themeName = this.$el.closest('[theme]').attr('theme') || 'default';
     const theme = themes[themeName] || defaultTheme;
-    return attachJss(styles, meta, name, theme);
+    return attachJss(styles, meta || this.moleculeName(), name || this.moleculeName(), theme);
 }

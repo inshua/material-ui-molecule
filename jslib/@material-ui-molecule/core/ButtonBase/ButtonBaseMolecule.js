@@ -56,6 +56,24 @@ export class ButtonBase extends ReactComponent {
   constructor(el) {
     super(el)
 
+    this.state = {};
+
+    this.ripple = null;
+
+    this.keyDown = false; // Used to help track keyboard activation keyDown
+
+    this.focusVisibleTimeout = null;
+
+    this.focusVisibleCheckTime = 50;
+
+    this.focusVisibleMaxCheckTimes = 5;
+
+    if(this.constructor == ButtonBase){
+      this.handlePropsChanged()
+    }
+  }
+
+  componentDidMount(){
     this.handleMouseDown = createRippleHandler(this, 'MouseDown', 'start', () => {
       clearTimeout(this.focusVisibleTimeout);
       if (this.state.focusVisible) {
@@ -176,20 +194,29 @@ export class ButtonBase extends ReactComponent {
       }
     };
 
-    this.state = {};
+    this.$el.on('blur', this.handleBlur)
+          .on('focus', this.handleFocus)
+          .on('keydown', this.handleKeyDown)
+          .on('keyup', this.handleKeyUp)
+          .on('mousedown', this.handleMouseDown)
+          .on('mouseup', this.handleMouseUp)
+          .on('mouseleave', this.handleMouseLeave)
+          .on('touchend', this.handleTouchEnd)
+          .on('touchstart', this.handleTouchStart)
+          .on('touchmove', this.handleTouchMove);
 
-    this.ripple = null;
+    this.button = this.el
+    listenForFocusKeys(ownerWindow(this.button));
 
-    this.keyDown = false; // Used to help track keyboard activation keyDown
-
-    this.focusVisibleTimeout = null;
-
-    this.focusVisibleCheckTime = 50;
-
-    this.focusVisibleMaxCheckTimes = 5;
-
-    if(this.constructor == ButtonBase){
-      this.handlePropsChanged()
+    if (this.props.action) {
+      this.props.action({
+        focusVisible: () => {
+          this.setState({
+            focusVisible: true
+          });
+          this.button.focus();
+        },
+      });
     }
   }
 
@@ -227,12 +254,11 @@ export class ButtonBase extends ReactComponent {
         [classes.disabled]: this.$el.prop('disabled'),
         [classes.focusVisible]: this.state.focusVisible,
         [focusVisibleClassName]: this.state.focusVisible,
-      },
-      this.userDefinedProps.className,
+      }      
     );
     this.el.className = className;
 
-    if (this.el.tagName == 'button') {
+    if (this.el.tagName == 'BUTTON') {
       this.el.disabled = disabled;
     } else {
       this.el.role = 'button';
@@ -245,6 +271,7 @@ export class ButtonBase extends ReactComponent {
     if (this.props.disabled || this.props.disableRipple) {
       if (this.ripple) {
         this.ripple.$el.remove();
+        this.ripple = null;
       }
     } else {
       if (!this.ripple) {
@@ -254,33 +281,6 @@ export class ButtonBase extends ReactComponent {
   }
 
 
-  componentDidMount() {
-    this.$el.on('blur', this.handleBlur)
-    .on('focus', this.handleFocus)
-    .on('keydown', this.handleKeyDown)
-    .on('keyup', this.handleKeyUp)
-    .on('mousedown', this.handleMouseDown)
-    .on('mouseup', this.handleMouseUp)
-    .on('mouseleave', this.handleMouseLeave)
-    .on('touchend', this.handleTouchEnd)
-    .on('touchstart', this.handleTouchStart)
-    .on('touchmove', this.handleTouchMove);
-
-    this.button = this.el
-    listenForFocusKeys(ownerWindow(this.button));
-
-    if (this.props.action) {
-      this.props.action({
-        focusVisible: () => {
-          this.setState({
-            focusVisible: true
-          });
-          this.button.focus();
-        },
-      });
-    }
-  }
-
   componentDidUpdate(prevProps, prevState) {
     if (
       this.props.focusRipple &&
@@ -288,7 +288,6 @@ export class ButtonBase extends ReactComponent {
       !prevState.focusVisible &&
       this.state.focusVisible
     ) {
-      console.log('pulsate')
       this.ripple.pulsate();
     }
   }

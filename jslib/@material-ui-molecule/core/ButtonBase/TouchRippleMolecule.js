@@ -131,7 +131,6 @@ export default class TouchRipple extends ReactComponent {
     }
 
     dispose() {
-        debugger;
         clearTimeout(this.startTimer);
     }
 
@@ -237,7 +236,7 @@ export default class TouchRipple extends ReactComponent {
             rippleSize,
             cb
         } = params;
-        let ripple = $(document.createElement('span')).setAttrs({
+        let ripple = $(document.createElement('span')).attr({
             m: 'mui.Ripple',
             props: JSON.stringify({
                 exitTimeout: DURATION,
@@ -249,7 +248,7 @@ export default class TouchRipple extends ReactComponent {
                 rippleY: rippleY,
                 rippleSize: rippleSize
             })
-        }).appendTo(this.el).molecule()
+        }).appendTo(this.el).molecule();
         this.state.ripples.push(ripple)
         if (cb) cb();
     };
