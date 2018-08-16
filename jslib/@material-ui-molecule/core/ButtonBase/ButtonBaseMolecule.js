@@ -275,7 +275,7 @@ export class ButtonBase extends ReactComponent {
       }
     } else {
       if (!this.ripple) {
-        this.ripple = $(document.createElement('span')).attr('m', 'mui.TouchRipple').appendTo(this.el).molecule();
+        this.ripple = $(document.createElement('span')).attr({'m': 'mui.TouchRipple', 'center': centerRipple}).appendTo(this.el).molecule();
       }
     }
   }

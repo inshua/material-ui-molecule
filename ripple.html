@@ -27,8 +27,7 @@
     <script src="jslib/molecule.js"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-
-    <molecule src="jslib/@material-ui-molecule/svg-icons.html"></molecule>
+    <molecule src="icon.html"></molecule>
 </head>
 
 <body>
@@ -45,6 +44,12 @@
                 <molecule-placeholder></molecule-placeholder>
             </span>
             <script constructor module="/jslib/@material-ui-molecule/core/Button/ButtonMolecule.js"></script>
+        </button>
+        <button m-def=mui.IconButton>
+            <span>
+                <molecule-placeholder></molecule-placeholder>
+            </span>
+            <script constructor module="/jslib/@material-ui-molecule/core/IconButton/IconButton.js"></script>
         </button>
 
         <div m-def=TextButtons>
@@ -79,7 +84,7 @@
                 // this.attachJss(styles);
                 const styles = theme => ({
                     button: {
-                        margin: [theme.spacing.unit, '!important'],     // 比按钮的 style 创建的早，会被覆盖
+                        margin: [theme.spacing.unit, '!important'], // 比按钮的 style 创建的早，会被覆盖
                     },
                     input: {
                         display: 'none',
@@ -94,7 +99,7 @@
         <div m-def=OutlinedButtons>
             <button m=mui.Button variant="outlined">Default</Button>
             <button m=mui.Button color="primary" variant="outlined">
-                Primary<svg m=icon.AccessibilityRounded></svg>
+                Primary
             </button>
             <button m=mui.Button color="secondary" variant="outlined">
                 Secondary
@@ -109,6 +114,102 @@
             <label for="flat-button-file">
                 <span m=mui.Button variant="outlined">
                     Upload
+                </span>
+            </label>
+            <script constructor>
+                const styles = theme => ({
+                    [`@global [m-inst=${this.moleculeName()}] button`]: {
+                        margin: theme.spacing.unit,
+                    },
+                    [`@global [m-inst=${this.moleculeName()}] input`]: {
+                        display: 'none',
+                    },
+                });
+                this.attachJss(styles);
+            </script>
+        </div>
+
+        <div m-def=ContainedButtons>
+            <button m=mui.Button variant="contained">Default</Button>
+            <button m=mui.Button color="primary" variant="contained">
+                Primary
+            </button>
+            <button m=mui.Button color="secondary" variant="contained">
+                Secondary
+            </button>
+            <button m=mui.Button disabled variant="contained">
+                Disabled
+            </button>
+            <a m=mui.Button href="#contained-buttons" variant="contained">
+                Link
+            </a>
+            <input accept="image/*" id="flat-button-file" multiple type="file" />
+            <label for="flat-button-file">
+                <span m=mui.Button variant="contained">
+                    Upload
+                </span>
+            </label>
+            <script constructor>
+                const styles = theme => ({
+                    [`@global [m-inst=${this.moleculeName()}] button`]: {
+                        margin: theme.spacing.unit,
+                    },
+                    [`@global [m-inst=${this.moleculeName()}] input`]: {
+                        display: 'none',
+                    },
+                });
+                this.attachJss(styles);
+            </script>
+        </div>
+
+
+        <div m-def=FloatingActionButtons>
+            <button m=mui.Button color="primary" aria-label="Add" variant="fab">
+                <i m=mui.Icon>add</i>
+            </button>
+            <button m=mui.Button color="secondary" aria-label="Edit" variant="fab">
+                <i m=mui.Icon>edit_icon</i>
+            </button>
+            <button m=mui.Button variant="extendedFab" aria-label="Delete">
+                <i m-class=extendedIcon m=mui.Icon>navigation</i>
+                Extended
+            </button>
+            <button m=mui.Button disabled aria-label="Delete" variant="fab">
+                <i m=mui.Icon>delete</i>
+            </button>
+            <script constructor>
+                const styles = theme => ({
+                    [`@global [m-inst=${this.moleculeName()}] button`]: {
+                        margin: theme.spacing.unit,
+                    },
+                    [`@global [m-inst=${this.moleculeName()}] input`]: {
+                        display: 'none',
+                    },
+                    [`@global [m-inst=${this.moleculeName()}] .extendedIcon`]: {
+                        marginRight: theme.spacing.unit,
+                    },
+                });
+                this.attachJss(styles);
+            </script>
+        </div>
+
+        <div m-def=IconButtons>
+            <button m=mui.IconButton aria-label="Delete">
+                <i m=mui.Icon>delete</i>
+            </button>
+            <button m=mui.IconButton aria-label="Delete" disabled color="primary">
+                <i m=mui.Icon>delete</i>
+            </button>
+            <button m=mui.IconButton color="secondary" aria-label="Add an alarm">
+                <i m=mui.Icon>alarm</i>
+            </button>
+            <button m=mui.IconButton color="primary" aria-label="Add to shopping cart">
+                <i m=mui.Icon>add_shopping_cart</i>
+            </button>
+            <input accept="image/*" id="icon-button-file" type="file" />
+            <label htmlFor="icon-button-file">
+                <span m=mui.IconButton color="primary">
+                    <i m=mui.Icon>photo_camera</i>
                 </span>
             </label>
             <script constructor>
@@ -144,12 +245,26 @@
     <div m=OutlinedButtons>
 
     </div>
+
+    <div m=ContainedButtons>
+
+    </div>
+
+    <div m=FloatingActionButtons>
+
+    </div>
+
+    <div m=IconButtons>
+
+    </div>
 </body>
 <script>
-    (async function(){
+    (async function () {
         console.log('add dark theme')
-        const jss = await import('/jslib/@material-ui-molecule/jss.js');
-        const createMuiTheme = await import('/jslib/@material-ui-molecule/core/styles/createMuiTheme.js');
+        const jss = await
+        import ('/jslib/@material-ui-molecule/jss.js');
+        const createMuiTheme = await
+        import ('/jslib/@material-ui-molecule/core/styles/createMuiTheme.js');
         const theme = createMuiTheme.default({
             palette: {
                 type: 'dark', // Switching the dark mode on is a single property value change.
@@ -159,4 +274,5 @@
         console.log('dark theme added')
     })();
 </script>
+
 </html>

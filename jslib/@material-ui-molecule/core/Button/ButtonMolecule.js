@@ -191,7 +191,6 @@ export const styles = theme => ({
   },
 });
 
-
 export default class Button extends ButtonBase {
 
   constructor(el) {
@@ -232,29 +231,30 @@ export default class Button extends ButtonBase {
     this.props.focusRipple = !disableFocusRipple;   // 对外暴露的是 disabledFocusRipple, 此值默认为 false
     super.render();   // 
 
-    const fab = variant === 'fab';
+    const fab = variant === 'fab' || variant === 'extendedFab';
     const contained = variant === 'contained' || variant === 'raised';
-    const text = !contained && !fab;
+    const text = variant === 'text' || variant === 'flat' || variant === 'outlined';
     const className = classNames(classes.root, {
-      [classes.contained]: contained || fab,
       [classes.fab]: fab,
       [classes.mini]: fab && mini,
-      [classes.colorInherit]: color === 'inherit',
+      [classes.extendedFab]: variant === 'extendedFab',
+      [classes.text]: text,
       [classes.textPrimary]: text && color === 'primary',
       [classes.textSecondary]: text && color === 'secondary',
-      [classes.flat]: text,
-      [classes.flatPrimary]: text && color === 'primary',
-      [classes.flatSecondary]: text && color === 'secondary',
-      [classes.containedPrimary]: !text && color === 'primary',
-      [classes.containedSecondary]: !text && color === 'secondary',
+      [classes.flat]: variant === 'text' || variant === 'flat',
+      [classes.flatPrimary]: (variant === 'text' || variant === 'flat') && color === 'primary',
+      [classes.flatSecondary]: (variant === 'text' || variant === 'flat') && color === 'secondary',
+      [classes.contained]: contained || fab,
+      [classes.containedPrimary]: (contained || fab) && color === 'primary',
+      [classes.containedSecondary]: (contained || fab) && color === 'secondary',
       [classes.raised]: contained || fab,
       [classes.raisedPrimary]: (contained || fab) && color === 'primary',
       [classes.raisedSecondary]: (contained || fab) && color === 'secondary',
-      [classes.text]: variant === 'text',
       [classes.outlined]: variant === 'outlined',
       [classes[`size${capitalize(size)}`]]: size !== 'medium',
       [classes.disabled]: disabled,
-      [classes.fullWidth]: fullWidth
+      [classes.fullWidth]: fullWidth,
+      [classes.colorInherit]: color === 'inherit',
     }, classNameProp);
 
     this.$el.addClass(className);
