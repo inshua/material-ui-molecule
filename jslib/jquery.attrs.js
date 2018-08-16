@@ -64,13 +64,19 @@ function dash2Camel(name) {
             let v = attrs[n];
             if (v != null) {
                 if (n == 'className') n == 'class';
-                n = camel2Dash(n)
-                if (n in this[0] || this[0].hasAttribute(n)) { // 仅修改原生属性或已经被设置过的非原生属性
-                    if (booleanProps[n]) {
-                        this.prop(n, v)
-                    } else {
-                        this[0].setAttribute(n, v);
+                const assign = (n)=> {
+                    if (n in this[0] || this[0].hasAttribute(n)) { // 仅修改原生属性或已经被设置过的非原生属性
+                        if (booleanProps[n]) {
+                            this.prop(n, v)
+                        } else {
+                            this[0].setAttribute(n, v);
+                        }
+                        return true;
                     }
+                };
+                if (!assign(n)){
+                    n = camel2Dash(n)
+                    assign(n)
                 }
             }
         }

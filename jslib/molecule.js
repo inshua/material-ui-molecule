@@ -32,28 +32,22 @@ function Molecule(container) {
 	 * @type {HTMLElement}
 	 */
     this.el = container;
-    this.$el = jQuery(container);
-    if (container == null) debugger;
 
     /**
 	 * molecule 所附着的 html 元素的 jQuery 包装
 	 * 
 	 * @type {jQueryElement}
 	 */
-    var me = this;
+
+    this.$el = jQuery(container);
+    if (container == null) debugger;
+
 	/**
 	 * molecule原型
 	 * 
 	 * @type {DOMElement}
 	 */
     this.moleculePrototype = null;
-
-    this.$el.on('focus', function(ele) {
-        me.focus && me.onfocus();
-    });
-    this.$el.on('blur', function(ele) {
-        me.blur && me.onblur();
-    });
 }
 
 Molecule.prototype = { isMolecule: true }
@@ -179,7 +173,7 @@ Molecule.registerPrototype = async function(el, baseUrl) {
         document.head.appendChild(style);
     }
 
-    console.log('define molecule ' + fullname);
+    //console.log('define molecule ' + fullname);
 
     try {
         var script = el.querySelector('script[constructor]');

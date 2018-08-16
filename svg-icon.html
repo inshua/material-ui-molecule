@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+
+<head>
+    <script>
+        var process = {
+            env: {
+                NODE_ENV: 'dev'
+            }
+        };
+        var global = window
+    </script>
+
+    <script src="jslib/jquery-3.3.1.js"></script>
+    <script src="jslib/jss/dist/jss.js"></script>
+
+    <script src="jslib/jss-global/dist/jss-global.js"></script>
+    <script src="jslib/jss-nested/dist/jss-nested.js"></script>
+    <script src="jslib/jss-camel-case/dist/jss-camel-case.js"></script>
+    <script src="jslib/jss-default-unit/dist/jss-default-unit.js"></script>
+    <script src="jslib/jss-vendor-prefixer/dist/jss-vendor-prefixer.js"></script>
+    <script src="jslib/jss-props-sort/dist/jss-props-sort.js"></script>
+    <script src="jslib/classnames/index.js"></script>
+
+    <script src="jslib/jquery.attrs.js"></script>
+    <script src="jslib/@material-ui-molecule/jss.js" type="module"></script>
+    <script src="jslib/molecule.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+</head>
+
+<body>
+    <template>
+        <svg m-def=mui.SvgIcon>
+            <script constructor module="/jslib/@material-ui-molecule/core/SvgIcon/SvgIcon.js"></script>
+        </svg>
+
+        <svg m-def=HomeIcon m=mui.SvgIcon>
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path>
+        </svg>
+        <div m-def=SvgIcons class="svg-icons">
+            <svg m=HomeIcon m-class="icon"/>
+            <svg m=HomeIcon m-class="icon" color="primary" />
+            <svg m=HomeIcon m-class="icon" color="secondary" />
+            <svg m=HomeIcon m-class="icon" color="action" />
+            <svg m=HomeIcon m-class="icon-hover" color="error" style="font-size:30px" />
+            <svg m=HomeIcon color="disabled" m-class="icon" style="font-size:36px" />
+            <svg id="gr" m=HomeIcon
+                m-class="icon"
+                color="primary"
+                style="font-size: 36px">
+                <defs>
+                    <linearGradient id="gradient1">
+                        <stop offset="30%"></stop>
+                        <stop offset="70%"></stop>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <script constructor>
+                (async ()=>{
+                    let red = await import('/jslib/@material-ui-molecule/core/colors/red.js');
+                    let blue = await import('/jslib/@material-ui-molecule/core/colors/blue.js');
+                    const styles = theme => ({
+                        '@global':{
+                            'svg-icons': {
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'flex-end',
+                            },
+                            'svg-icons icon': {
+                                margin: theme.spacing.unit * 2,
+                            },
+                            'svg-icons icon-hover': {
+                                margin: theme.spacing.unit * 2,
+                                '&:hover': {
+                                color: red[800],
+                                },
+                            },
+                        }
+                    });
+                    let classes = this.attachJss(styles);
+
+                    let gr = this.el.querySelector('#gr');
+                    let stops = gr.querySelectorAll('#gradient1 stop')
+                    stops[0].setAttribute('stop-color', blue.default[400]);
+                    stops[1].setAttribute('stop-color', red.default[400]);
+                    gr.querySelector('path').setAttribute('fill', "url(#gradient1)");
+                })();
+            </script>            
+        </div>
+    </template>
+
+    <!-- <svg m=mui.SvgIcon style="color:red">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path>
+    </svg> -->
+
+    <div m=SvgIcons></div>
+</body>
+</html>

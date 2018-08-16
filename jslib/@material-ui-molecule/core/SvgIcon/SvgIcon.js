@@ -1,5 +1,6 @@
 import {  ReactComponent } from '../../fake-react.js'
 import {  capitalize } from '../utils/helpers.js';
+import deepmerge from '/jslib/deepmerge/dist/umd.js';
 
 export const styles = theme => ({
   /* Styles applied to the root element. */
@@ -41,8 +42,6 @@ export const styles = theme => ({
   },
 });
 
-const defaultClasses = attachJss(styles(defaultTheme), 'SvgIcon', 'SvgIcon')
-
 export default class SvgIcon extends ReactComponent {
 
   constructor(el) {
@@ -54,19 +53,19 @@ export default class SvgIcon extends ReactComponent {
   }
 
   mixProps(props) {
-    super.mixProps(deepmerge(Button.defaultProps, props));
+    super.mixProps(deepmerge(SvgIcon.defaultProps, props));
   }
 
   prepareClasses() {
     super.prepareClasses();
-    this.iconClasses = defaultClasses;
+    this.iconClasses = this.attachJss(styles, 'SvgIcon', 'SvgIcon');
   }
 
   render() {
     const classes = this.iconClasses;
     const {
       children,
-      className: classNameProp,
+      mClass: classNameProp,
       color,
       component: Component,
       fontSize,
@@ -74,7 +73,7 @@ export default class SvgIcon extends ReactComponent {
       titleAccess,
       viewBox,
       ...other
-    } = props;
+    } = this.props;
 
     const className = classNames(
       classes.root, {
@@ -83,14 +82,15 @@ export default class SvgIcon extends ReactComponent {
       },
       classNameProp,
     );
-    this.el.className = className;
+
     this.$el.setAttrs(Object.assign(other, {
-      className: className,
-      focusable: false,
       viewBox: viewBox,
       color: nativeColor,
-      'aria-hidden': titleAccess ? false : true
+      ariaHidden: titleAccess ? false : true
     }));
+
+    this.el.focusable = false;
+    this.el.setAttribute('class', className);
 
     const title = this.$el.find('title');
     if (titleAccess) {
@@ -100,7 +100,7 @@ export default class SvgIcon extends ReactComponent {
         $(document.createElement('title')).html(titleAccess).appendTo(this.el);
       }
     } else {
-      title.remove();
+      if (title.length) title.remove();
     }
   }
 }

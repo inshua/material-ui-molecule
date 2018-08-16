@@ -235,7 +235,7 @@ export class ButtonBase extends ReactComponent {
     let {
       action,
       centerRipple,
-      className: classNameProp,
+      mClass : classNameProp,
       disabled,
       disableRipple,
       disableTouchRipple,
