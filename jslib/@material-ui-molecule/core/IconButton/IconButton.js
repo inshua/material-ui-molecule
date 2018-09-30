@@ -120,7 +120,7 @@ export default class IconButton extends ButtonBase {
 
     this.$el.addClass(className);
 
-    this.$el.find('span')[0].className = classes.label;
+    this.$el.find('span#icon')[0].className = classes.label;
   }
 }
 

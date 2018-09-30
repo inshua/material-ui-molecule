@@ -1,75 +1,84 @@
-import _extends from "@babel/runtime/helpers/builtin/extends";
-import _objectWithoutProperties from "@babel/runtime/helpers/builtin/objectWithoutProperties";
-import React from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import withStyles from '../styles/withStyles';
-import { capitalize } from '../utils/helpers';
-import SwitchBase from '../internal/SwitchBase';
+import {
+  capitalize
+} from '../utils/helpers.js';
+import SwitchBase from '../internal/SwitchBase.js';
+import { ReactComponent } from '../../fake-react.js';
+import deepmerge from '/jslib/deepmerge/dist/umd.js';
+
+
 export const styles = theme => ({
+  /* Styles applied to the root element. */
   root: {
     display: 'inline-flex',
     width: 62,
     position: 'relative',
     flexShrink: 0,
     // For correct alignment with the text.
-    verticalAlign: 'middle'
+    verticalAlign: 'middle',
   },
+  /* Styles used to create the `icon` passed to the internal `SwitchBase` component `icon` prop. */
   icon: {
     boxShadow: theme.shadows[1],
     backgroundColor: 'currentColor',
     width: 20,
     height: 20,
-    borderRadius: '50%'
+    borderRadius: '50%',
   },
+  /* Styles applied the icon element component if `checked={true}`. */
   iconChecked: {
-    boxShadow: theme.shadows[2]
+    boxShadow: theme.shadows[2],
   },
+  /* Styles applied to the internal `SwitchBase` component's `root` class. */
   switchBase: {
     zIndex: 1,
     color: theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[400],
     transition: theme.transitions.create('transform', {
-      duration: theme.transitions.duration.shortest
-    })
+      duration: theme.transitions.duration.shortest,
+    }),
   },
+  /* Styles applied to the internal `SwitchBase` component's `checked` class. */
   checked: {
     transform: 'translateX(14px)',
     '& + $bar': {
-      opacity: 0.5
-    }
+      opacity: 0.5,
+    },
   },
+  /* Styles applied to the internal SwitchBase component's root element if `color="primary"`. */
   colorPrimary: {
     '&$checked': {
       color: theme.palette.primary.main,
       '& + $bar': {
-        backgroundColor: theme.palette.primary.main
-      }
-    }
+        backgroundColor: theme.palette.primary.main,
+      },
+    },
   },
+  /* Styles applied to the internal SwitchBase component's root element if `color="secondary"`. */
   colorSecondary: {
     '&$checked': {
       color: theme.palette.secondary.main,
       '& + $bar': {
-        backgroundColor: theme.palette.secondary.main
-      }
-    }
+        backgroundColor: theme.palette.secondary.main,
+      },
+    },
   },
+  /* Styles applied to the internal SwitchBase component's disabled class. */
   disabled: {
     '& + $bar': {
-      opacity: theme.palette.type === 'light' ? 0.12 : 0.1
+      opacity: theme.palette.type === 'light' ? 0.12 : 0.1,
     },
     '& $icon': {
-      boxShadow: theme.shadows[1]
+      boxShadow: theme.shadows[1],
     },
     '&$switchBase': {
       color: theme.palette.type === 'light' ? theme.palette.grey[400] : theme.palette.grey[800],
       '& + $bar': {
-        backgroundColor: theme.palette.type === 'light' ? theme.palette.common.black : theme.palette.common.white
-      }
-    }
+        backgroundColor: theme.palette.type === 'light' ? theme.palette.common.black : theme.palette.common.white,
+      },
+    },
   },
+  /* Styles applied to the bar element. */
   bar: {
-    borderRadius: 7,
+    borderRadius: 14 / 2,
     display: 'block',
     position: 'absolute',
     width: 34,
@@ -79,124 +88,158 @@ export const styles = theme => ({
     marginTop: -7,
     marginLeft: -17,
     transition: theme.transitions.create(['opacity', 'background-color'], {
-      duration: theme.transitions.duration.shortest
+      duration: theme.transitions.duration.shortest,
     }),
     backgroundColor: theme.palette.type === 'light' ? theme.palette.common.black : theme.palette.common.white,
-    opacity: theme.palette.type === 'light' ? 0.38 : 0.3
-  }
+    opacity: theme.palette.type === 'light' ? 0.38 : 0.3,
+  },
 });
 
-function Switch(props) {
-  const {
-    classes,
-    className,
-    color
-  } = props,
-        other = _objectWithoutProperties(props, ["classes", "className", "color"]);
+export default class Switch extends ReactComponent {
 
-  return React.createElement("span", {
-    className: classNames(classes.root, className)
-  }, React.createElement(SwitchBase, _extends({
-    icon: React.createElement("span", {
-      className: classes.icon
-    }),
-    classes: {
-      root: classNames(classes.switchBase, classes[`color${capitalize(color)}`]),
-      checked: classes.checked,
-      disabled: classes.disabled
-    },
-    checkedIcon: React.createElement("span", {
-      className: classNames(classes.icon, classes.iconChecked)
-    })
-  }, other)), React.createElement("span", {
-    className: classes.bar
-  }));
+  componentDidMount(){
+    if(this.constructor == Switch){
+      this.handlePropsChanged()
+    }
+  }
+
+  mixProps(props){
+    super.mixProps(deepmerge(Switch.defaultProps, props));
+  }
+
+  prepareClasses(){
+    super.prepareClasses();
+    this.classes = this.attachJss(styles, 'Switch', 'Switch');
+  }
+
+
+  render(){
+    let {
+      classes,
+      className,
+      color,
+      ...other
+    } = this.props;
+
+    classes = deepmerge(classes || {}, this.classes);
+
+    this.el.className = classNames(classes.root, className);
+    
+    const $switchBase = this.$el.find('span')
+    $switchBase[0].props = Object.assign($switchBase[0].props || {}, {
+      'classes': {
+        root: classNames(classes.switchBase, classes[`color${capitalize(color)}`]),
+        checked: classes.checked,
+        disabled: classes.disabled
+      },
+      icon: $(document.createElement('span')).addClass(classes.icon)[0],
+      checkedIcon: $(document.createElement('span')).addClass(classNames(classes.icon, classes.iconChecked))[0],
+    });
+
+    this.$el.find('span#bar').attr('class', classes.bar);
+  }
+
+  // return <span className={classNames(classes.root, className)}>
+  //   <SwitchBase
+  //     icon={<span className={classes.icon} />}
+  //     classes={{
+  //       root: classNames(classes.switchBase, classes[`color${capitalize(color)}`]),
+  //       checked: classes.checked,
+  //       disabled: classes.disabled,
+  //     }}
+  //     checkedIcon={<span className={classNames(classes.icon, classes.iconChecked)} />}
+  //     {...other}
+  //   />
+  //   <span className={classes.bar} />
+  // </span>
+
+
 }
 
-Switch.propTypes = process.env.NODE_ENV !== "production" ? {
-  /**
-   * If `true`, the component is checked.
-   */
-  checked: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
+// Switch.propTypes = process.env.NODE_ENV !== "production" ? {
+//   /**
+//    * If `true`, the component is checked.
+//    */
+//   checked: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
 
-  /**
-   * The icon to display when the component is checked.
-   */
-  checkedIcon: PropTypes.node,
+//   /**
+//    * The icon to display when the component is checked.
+//    */
+//   checkedIcon: PropTypes.node,
 
-  /**
-   * Override or extend the styles applied to the component.
-   * See [CSS API](#css-api) below for more details.
-   */
-  classes: PropTypes.object.isRequired,
+//   /**
+//    * Override or extend the styles applied to the component.
+//    * See [CSS API](#css-api) below for more details.
+//    */
+//   classes: PropTypes.object.isRequired,
 
-  /**
-   * @ignore
-   */
-  className: PropTypes.string,
+//   /**
+//    * @ignore
+//    */
+//   className: PropTypes.string,
 
-  /**
-   * The color of the component. It supports those theme colors that make sense for this component.
-   */
-  color: PropTypes.oneOf(['primary', 'secondary', 'default']),
+//   /**
+//    * The color of the component. It supports those theme colors that make sense for this component.
+//    */
+//   color: PropTypes.oneOf(['primary', 'secondary', 'default']),
 
-  /**
-   * @ignore
-   */
-  defaultChecked: PropTypes.bool,
+//   /**
+//    * @ignore
+//    */
+//   defaultChecked: PropTypes.bool,
 
-  /**
-   * If `true`, the switch will be disabled.
-   */
-  disabled: PropTypes.bool,
+//   /**
+//    * If `true`, the switch will be disabled.
+//    */
+//   disabled: PropTypes.bool,
 
-  /**
-   * If `true`, the ripple effect will be disabled.
-   */
-  disableRipple: PropTypes.bool,
+//   /**
+//    * If `true`, the ripple effect will be disabled.
+//    */
+//   disableRipple: PropTypes.bool,
 
-  /**
-   * The icon to display when the component is unchecked.
-   */
-  icon: PropTypes.node,
+//   /**
+//    * The icon to display when the component is unchecked.
+//    */
+//   icon: PropTypes.node,
 
-  /**
-   * The id of the `input` element.
-   */
-  id: PropTypes.string,
+//   /**
+//    * The id of the `input` element.
+//    */
+//   id: PropTypes.string,
 
-  /**
-   * Attributes applied to the `input` element.
-   */
-  inputProps: PropTypes.object,
+//   /**
+//    * Attributes applied to the `input` element.
+//    */
+//   inputProps: PropTypes.object,
 
-  /**
-   * Use that property to pass a ref callback to the native input component.
-   */
-  inputRef: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
+//   /**
+//    * Use that property to pass a ref callback to the native input component.
+//    */
+//   inputRef: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
 
-  /**
-   * Callback fired when the state is changed.
-   *
-   * @param {object} event The event source of the callback.
-   * You can pull out the new value by accessing `event.target.checked`.
-   * @param {boolean} checked The `checked` value of the switch
-   */
-  onChange: PropTypes.func,
+//   /**
+//    * Callback fired when the state is changed.
+//    *
+//    * @param {object} event The event source of the callback.
+//    * You can pull out the new value by accessing `event.target.checked`.
+//    * @param {boolean} checked The `checked` value of the switch
+//    */
+//   onChange: PropTypes.func,
 
-  /**
-   * The input component property `type`.
-   */
-  type: PropTypes.string,
+//   /**
+//    * The input component property `type`.
+//    */
+//   type: PropTypes.string,
 
-  /**
-   * The value of the component.
-   */
-  value: PropTypes.string
-} : {};
+//   /**
+//    * The value of the component.
+//    */
+//   value: PropTypes.string
+// } : {};
 Switch.defaultProps = {
   color: 'secondary'
 };
-export default withStyles(styles, {
-  name: 'MuiSwitch'
-})(Switch);
+// export default withStyles(styles, {
+//   name: 'MuiSwitch'
+// })(Switch);

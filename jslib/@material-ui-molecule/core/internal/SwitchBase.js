@@ -1,11 +1,9 @@
-import _extends from "@babel/runtime/helpers/builtin/extends";
-import _objectWithoutProperties from "@babel/runtime/helpers/builtin/objectWithoutProperties";
 // @inheritedComponent IconButton
-import React from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import withStyles from '../styles/withStyles';
-import IconButton from '../IconButton';
+
+import IconButton from '../IconButton/IconButton.js';
+import deepmerge from '/jslib/deepmerge/dist/umd.js';
+
+
 export const styles = {
   root: {
     display: 'inline-flex',
@@ -13,8 +11,8 @@ export const styles = {
     transition: 'none',
     '&:hover': {
       // Disable the hover effect for the IconButton.
-      backgroundColor: 'transparent'
-    }
+      backgroundColor: 'transparent',
+    },
   },
   checked: {},
   disabled: {},
@@ -27,243 +25,273 @@ export const styles = {
     top: 0,
     left: 0,
     margin: 0,
-    padding: 0
-  }
+    padding: 0,
+  },
 };
 
-class SwitchBase extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
+/**
+ * @ignore - internal component.
+ */
+export default class SwitchBase extends IconButton {
+
+  constructor(el){
+    super(el);
+  }
+
+  mixProps(props){
+    super.mixProps(deepmerge(SwitchBase.defaultProps, props));
+  }
+
+  prepareClasses(){
+    super.prepareClasses();
+    this.switchBaseClasses = this.attachJss(styles, 'SwitchBase', 'SwitchBase');
+  }
+
+
+  componentDidMount(){
+    super.componentDidMount();
+
     this.input = null;
-    this.isControlled = null;
+
+    this.isControlled = this.props.checked != null;
+
+    if (!this.isControlled) {
+      // not controlled, use internal state
+      this.state.checked = this.props.defaultChecked !== undefined ? this.props.defaultChecked : false;
+    }
 
     this.handleFocus = event => {
       if (this.props.onFocus) {
         this.props.onFocus(event);
       }
-
-      const {
-        muiFormControl
-      } = this.context;
-
+  
+      const { muiFormControl } = this.context;
       if (muiFormControl && muiFormControl.onFocus) {
         muiFormControl.onFocus(event);
       }
     };
-
+  
     this.handleBlur = event => {
       if (this.props.onBlur) {
         this.props.onBlur(event);
       }
-
-      const {
-        muiFormControl
-      } = this.context;
-
+  
+      const { muiFormControl } = this.context;
       if (muiFormControl && muiFormControl.onBlur) {
         muiFormControl.onBlur(event);
       }
     };
-
+  
     this.handleInputChange = event => {
       const checked = event.target.checked;
-
+  
       if (!this.isControlled) {
-        this.setState({
-          checked
-        });
+        this.setState({ checked });
       }
-
+  
       if (this.props.onChange) {
         this.props.onChange(event, checked);
       }
     };
 
-    this.isControlled = props.checked != null;
+    this.$el.on('focus', this.handleFocus).on('blur', this.handleBlur);
 
-    if (!this.isControlled) {
-      // not controlled, use internal state
-      this.state.checked = props.defaultChecked !== undefined ? props.defaultChecked : false;
+    const $input = this.$el.find('input');
+    $input.on('change', this.handleInputChange);
+
+    if(this.constructor == SwitchBase){
+      this.handlePropsChanged();
     }
+
   }
 
-  render() {
-    const _props = this.props,
-          {
-      checked: checkedProp,
+  render(){
+    super.render();
+
+    //const classes = deepmerge(this.classes, this.props.classes || {});
+    const classes = this.switchBaseClasses;
+
+    const {
       checkedIcon,
-      classes,
-      className: classNameProp,
-      disabled: disabledProp,
       icon,
+      
+      autoFocus,
+      checked: checkedProp,
+      mClass: classNameProp,
+      disabled: disabledProp,
       id,
       inputProps,
       inputRef,
       name,
+
       onBlur,
       onChange,
       onFocus,
+
+      readOnly,
+      required,
       tabIndex,
       type,
-      value
-    } = _props,
-          other = _objectWithoutProperties(_props, ["checked", "checkedIcon", "classes", "className", "disabled", "icon", "id", "inputProps", "inputRef", "name", "onBlur", "onChange", "onFocus", "tabIndex", "type", "value"]);
+      value,
+      ...other
+    } = this.props;
 
-    const {
-      muiFormControl
-    } = this.context;
     let disabled = disabledProp;
+    if(!disabled && this.$el.closest('[disabled]').prop('disabled')){
+      disabled = true;
+    }
 
-    if (muiFormControl) {
-      if (typeof disabled === 'undefined') {
-        disabled = muiFormControl.disabled;
-      }
+    if(this.constructor == SwitchBase){  // 用户设置的属性已经收集到 userProps，现在清空 class
+      this.el.className == ''
     }
 
     const checked = this.isControlled ? checkedProp : this.state.checked;
     const hasLabelFor = type === 'checkbox' || type === 'radio';
-    return React.createElement(IconButton, _extends({
-      component: "span",
-      className: classNames(classes.root, {
+
+    this.$el.addClass(classNames(
+      this.props.classes.root,
+      classes.root,
+      {
         [classes.checked]: checked,
-        [classes.disabled]: disabled
-      }, classNameProp),
-      disabled: disabled,
-      tabIndex: null,
-      role: undefined,
-      onFocus: this.handleFocus,
-      onBlur: this.handleBlur
-    }, other), checked ? checkedIcon : icon, React.createElement("input", _extends({
-      id: hasLabelFor && id,
-      type: type,
-      name: name,
-      checked: checked,
-      onChange: this.handleInputChange,
-      className: classes.input,
-      disabled: disabled,
+        [classes.disabled]: disabled,
+      },
+      classNameProp,
+    ));
+
+    this.$el.prop('disabled', disabled);
+    let iconSpan = this.el.querySelector('#check-icon')
+    let n =  (checked?  checkedIcon : icon).cloneNode(true);
+    n.id = 'check-icon';
+    iconSpan.parentNode.insertBefore(n, iconSpan);
+    iconSpan.remove();
+
+    const $input = this.$el.find('input');
+    $input.attr({
+      'auto-focus': autoFocus,
+      'checked': checked,
+      'class': classes.input,
+      'disabled': disabled,
+      'id' : hasLabelFor && id,
+      'name': name,
+      'readonly': readOnly,
+      //'ref': inputRef,
+      required: required,
       tabIndex: tabIndex,
+      type: type,
       value: value,
-      ref: inputRef
-    }, inputProps)));
+    })
   }
+}
 
-} // NB: If changed, please update Checkbox, Switch and Radio
-// so that the API documentation is updated.
+// // NB: If changed, please update Checkbox, Switch and Radio
+// // so that the API documentation is updated.
+// SwitchBase.propTypes = {
+//   /**
+//    * If `true`, the input will be focused during the first mount.
+//    */
+//   autoFocus: PropTypes.bool,
+//   /**
+//    * If `true`, the component is checked.
+//    */
+//   checked: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
+//   /**
+//    * The icon to display when the component is checked.
+//    */
+//   checkedIcon: PropTypes.node.isRequired,
+//   /**
+//    * Override or extend the styles applied to the component.
+//    * See [CSS API](#css-api) below for more details.
+//    */
+//   classes: PropTypes.object.isRequired,
+//   /**
+//    * @ignore
+//    */
+//   className: PropTypes.string,
+//   /**
+//    * @ignore
+//    */
+//   defaultChecked: PropTypes.bool,
+//   /**
+//    * If `true`, the switch will be disabled.
+//    */
+//   disabled: PropTypes.bool,
+//   /**
+//    * If `true`, the ripple effect will be disabled.
+//    */
+//   disableRipple: PropTypes.bool,
+//   /**
+//    * The icon to display when the component is unchecked.
+//    */
+//   icon: PropTypes.node.isRequired,
+//   /**
+//    * The id of the `input` element.
+//    */
+//   id: PropTypes.string,
+//   /**
+//    * If `true`, the component appears indeterminate.
+//    */
+//   indeterminate: PropTypes.bool,
+//   /**
+//    * The icon to display when the component is indeterminate.
+//    */
+//   indeterminateIcon: PropTypes.node,
+//   /**
+//    * Attributes applied to the `input` element.
+//    */
+//   inputProps: PropTypes.object,
+//   /**
+//    * Use that property to pass a ref callback to the native input component.
+//    */
+//   inputRef: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
+//   /*
+//    * @ignore
+//    */
+//   name: PropTypes.string,
+//   /**
+//    * @ignore
+//    */
+//   onBlur: PropTypes.func,
+//   /**
+//    * Callback fired when the state is changed.
+//    *
+//    * @param {object} event The event source of the callback.
+//    * You can pull out the new value by accessing `event.target.checked`.
+//    * @param {boolean} checked The `checked` value of the switch
+//    */
+//   onChange: PropTypes.func,
+//   /**
+//    * @ignore
+//    */
+//   onFocus: PropTypes.func,
+//   /**
+//    * It prevents the user from changing the value of the field
+//    * (not from interacting with the field).
+//    */
+//   readOnly: PropTypes.bool,
+//   /**
+//    * If `true`, the input will be required.
+//    */
+//   required: PropTypes.bool,
+//   /**
+//    * @ignore
+//    */
+//   tabIndex: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+//   /**
+//    * The input component property `type`.
+//    */
+//   type: PropTypes.string,
+//   /**
+//    * The value of the component.
+//    */
+//   value: PropTypes.string,
+// };
 
-
-SwitchBase.propTypes = process.env.NODE_ENV !== "production" ? {
-  /**
-   * If `true`, the component is checked.
-   */
-  checked: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
-
-  /**
-   * The icon to display when the component is checked.
-   */
-  checkedIcon: PropTypes.node.isRequired,
-
-  /**
-   * Override or extend the styles applied to the component.
-   * See [CSS API](#css-api) below for more details.
-   */
-  classes: PropTypes.object.isRequired,
-
-  /**
-   * @ignore
-   */
-  className: PropTypes.string,
-
-  /**
-   * @ignore
-   */
-  defaultChecked: PropTypes.bool,
-
-  /**
-   * If `true`, the switch will be disabled.
-   */
-  disabled: PropTypes.bool,
-
-  /**
-   * If `true`, the ripple effect will be disabled.
-   */
-  disableRipple: PropTypes.bool,
-
-  /**
-   * The icon to display when the component is unchecked.
-   */
-  icon: PropTypes.node.isRequired,
-
-  /**
-   * The id of the `input` element.
-   */
-  id: PropTypes.string,
-
-  /**
-   * If `true`, the component appears indeterminate.
-   */
-  indeterminate: PropTypes.bool,
-
-  /**
-   * The icon to display when the component is indeterminate.
-   */
-  indeterminateIcon: PropTypes.node,
-
-  /**
-   * Attributes applied to the `input` element.
-   */
-  inputProps: PropTypes.object,
-
-  /**
-   * Use that property to pass a ref callback to the native input component.
-   */
-  inputRef: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
-
-  /*
-   * @ignore
-   */
-  name: PropTypes.string,
-
-  /**
-   * @ignore
-   */
-  onBlur: PropTypes.func,
-
-  /**
-   * Callback fired when the state is changed.
-   *
-   * @param {object} event The event source of the callback.
-   * You can pull out the new value by accessing `event.target.checked`.
-   * @param {boolean} checked The `checked` value of the switch
-   */
-  onChange: PropTypes.func,
-
-  /**
-   * @ignore
-   */
-  onFocus: PropTypes.func,
-
-  /**
-   * @ignore
-   */
-  tabIndex: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-
-  /**
-   * The input component property `type`.
-   */
-  type: PropTypes.string,
-
-  /**
-   * The value of the component.
-   */
-  value: PropTypes.string
-} : {};
 SwitchBase.defaultProps = {
-  type: 'checkbox'
+  type: 'checkbox',
 };
-SwitchBase.contextTypes = {
-  muiFormControl: PropTypes.object
-};
-export default withStyles(styles, {
-  name: 'MuiSwitchBase'
-})(SwitchBase);
+
+// SwitchBase.contextTypes = {
+//   muiFormControl: PropTypes.object,
+// };
+
+// export default withStyles(styles, { name: 'MuiSwitchBase' })(SwitchBase);

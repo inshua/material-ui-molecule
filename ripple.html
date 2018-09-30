@@ -28,6 +28,8 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <molecule src="icon.html"></molecule>
+
+    <script src="jslib/@material-ui-molecule/core/internal/SwitchBase.js" type=module></script>
 </head>
 
 <body>
@@ -46,11 +48,28 @@
             <script constructor module="/jslib/@material-ui-molecule/core/Button/ButtonMolecule.js"></script>
         </button>
         <button m-def=mui.IconButton>
-            <span>
+            <span id="icon">
                 <molecule-placeholder></molecule-placeholder>
             </span>
             <script constructor module="/jslib/@material-ui-molecule/core/IconButton/IconButton.js"></script>
         </button>
+
+        <span m-def=mui.SwitchBase>
+            <span id="icon">
+                <span id="check-icon"></span>
+                <molecule-placeholder></molecule-placeholder>
+                <input>
+            </span>
+            <script constructor module="/jslib/@material-ui-molecule/core/internal/SwitchBase.js"></script>
+        </span>
+        
+        <span m-def=mui.Switch>
+            <span m=mui.SwitchBase></span>
+            <span id="bar"></span>
+            <script constructor module="/jslib/@material-ui-molecule/core/Switch/Switch.js"></script>
+        </span>
+
+        <!-- ------------------ samples ---------------------- -->
 
         <div m-def=TextButtons>
             <button m=mui.Button watch-attr>Default</Button>
@@ -236,7 +255,12 @@
         CLICK ME
     </button> -->
 
-    <div theme="dark" style="background: darkslategray">
+    <div>
+        <span m=mui.Switch></span>
+    </div>
+    
+
+    <!-- <div theme="dark" style="background: darkslategray">
         <div m=TextButtons>
 
         </div>
@@ -256,7 +280,8 @@
 
     <div m=IconButtons>
 
-    </div>
+    </div> -->
+
 </body>
 <script>
     (async function () {

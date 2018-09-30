@@ -8,11 +8,12 @@ function isNonNullObject(value) {
 }
 
 function isSpecial(value) {
-	var stringValue = Object.prototype.toString.call(value);
+	return value.constructor != Object;
+	// var stringValue = Object.prototype.toString.call(value);
 
-	return stringValue === '[object RegExp]' ||
-		stringValue === '[object Date]' ||
-		isReactElement(value)
+	// return stringValue === '[object RegExp]' ||
+	// 	stringValue === '[object Date]' ||
+	// 	isReactElement(value)
 }
 
 // see https://github.com/facebook/react/blob/b5ac963fb791d1298e7f396236383bc955f916c1/src/isomorphic/classic/element/ReactElement.js#L21-L25

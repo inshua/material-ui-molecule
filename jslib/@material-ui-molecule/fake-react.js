@@ -7,6 +7,9 @@ export class ReactComponent{
         this.element = el;
         this.state = null;
 
+        this.props = {}
+        this.userDefinedProps = {}
+
         setTimeout(()=>{this.componentDidMount()},0)
     }
 
@@ -45,6 +48,28 @@ export class ReactComponent{
         this.mixProps({});          // 混合属性。将属性和默认属性混合。Button mix with Button.defaultProps, ButtonBase mix with ButtonBase.defaultProps, ReactComponent mix with this.userProps
         this.prepareClasses();      // 准备样式类
         this.render();              // 渲染
+    }
+
+    setProp(key, value){
+        const setPropInner = (key, value) => {
+            if(this.userDefinedProps[key] != value && this.props[key] != value){
+                if(this.el.props == null) this.el.props = {};
+                this.el.props[key] = value;
+                return true;
+            }
+        }
+
+        let changed = false
+        if(typeof key == 'object'){
+            const bundle = key;
+            for(key of Object.keys(bundle)){
+                value = bundle[key];
+                if(setPropInner(key, value)) changed = true;
+            }
+        } else {
+            if(setPropInner(key, value)) changed = true;
+        }
+        if(changed) this.handlePropsChanged()
     }
 
     componentDidMount(){    // 构造函数后执行，可以在这里执行一些挂载事件处理等的程序

@@ -1,0 +1,318 @@
+
+<!doctype html>
+<html>
+
+<head>
+
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,minimal-ui">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <!-- <link rel="stylesheet" href="../muse-ui/dist/muse-ui.css">
+    <link rel="stylesheet" href="../muse-ui/dist/muse-ui.js"> -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="molecule.js"></script>
+
+</head>
+
+<body>
+    <template>
+        <!-- 
+            m-disabled:m=disabled means mapped attribute
+        -->
+        <button m-def=mu.Button
+            m-color:s=default
+            m-disabled:m=disabled       
+            m-disabled-focus-ripple:b=false
+            m-full-width:b=false
+            m-mini:b=false
+            m-size:s=medium
+            m-variant:s=text
+
+            m-blur:e={this.handleBlur}
+            m-focus:e={this.handleFocus}
+            m-keydown:e={this.handleKeyDown}
+            m-keyup:e={this.handleKeyUp}
+            m-mousedown:e={this.handleMouseDown}
+            m-mouseleave:e={this.handleMouseLeave}
+            m-mouseup:e={this.handleMouseUp}
+            m-touchend:e={this.handleTouchEnd}
+            m-touchmove:e={this.handleTouchMove}
+            m-touchstart:e={this.handleTouchStart}
+            tabIndex="{disabled ? '-1' : $.tabIndex}"
+            class="{this.extendClass($.className)}"
+            m-ref:o={$.buttonRef}
+        >
+            <m:placehodler></m:placehodler>
+            <m:if cond="{!disableRipple && !disabled}"
+                <div m=mu.TouchRipple m-ref:o={this.onRippleRef} center={$.centerRipple} m-renderer={$el.attrs($.touchRippleProps)}/>
+            </m:if>
+        </button>
+
+        <button molecule-def=mu.Button
+                m:color=default
+                m:component=button
+                m:disabled=false
+                m:disableFocusRipple=false
+                m:fullWidth=false
+                m:mini=false
+                m:size=medium
+                m:type=button
+                m:variant=text>
+            <div class="mu-flat-button-wrapper">
+                <span><molecule-placeholder></molecule-placeholder></span>
+                <!-- <span molecule=mu.TouchRipple></span> -->
+            </div>
+            <script constructor>
+                function _objectWithoutProperties(source, excluded) {
+                    if (source == null) return {};
+                    var target = {};
+                    var sourceKeys = Object.keys(source);
+                    var key, i;
+
+                    for (i = 0; i < sourceKeys.length; i++) {
+                        key = sourceKeys[i];
+                        if (excluded.indexOf(key) >= 0) continue;
+                        target[key] = source[key];
+                    }
+
+                    if (Object.getOwnPropertySymbols) {
+                        var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+                        for (i = 0; i < sourceSymbolKeys.length; i++) {
+                            key = sourceSymbolKeys[i];
+                            if (excluded.indexOf(key) >= 0) continue;
+                            if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+                            target[key] = source[key];
+                        }
+                    }
+
+                    return target;
+                }
+
+                var styles = theme => ({
+                root: _objectSpread({}, theme.typography.button, {
+                    lineHeight: '1.4em',
+                    // Improve readability for multiline button.
+                    boxSizing: 'border-box',
+                    minWidth: theme.spacing.unit * 11,
+                    minHeight: 36,
+                    padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
+                    borderRadius: 4,
+                    color: theme.palette.text.primary,
+                    transition: theme.transitions.create(['background-color', 'box-shadow'], {
+                    duration: theme.transitions.duration.short
+                    }),
+                    '&:hover': {
+                    textDecoration: 'none',
+                    backgroundColor: fade(theme.palette.text.primary, theme.palette.action.hoverOpacity),
+                    // Reset on touch devices, it doesn't add specificity
+                    '@media (hover: none)': {
+                        backgroundColor: 'transparent'
+                    },
+                    '&$disabled': {
+                        backgroundColor: 'transparent'
+                    }
+                    },
+                    '&$disabled': {
+                    color: theme.palette.action.disabled
+                    }
+                }),
+                label: {
+                    width: '100%',
+                    display: 'inherit',
+                    alignItems: 'inherit',
+                    justifyContent: 'inherit'
+                },
+                textPrimary: {
+                    color: theme.palette.primary.main,
+                    '&:hover': {
+                    backgroundColor: fade(theme.palette.primary.main, theme.palette.action.hoverOpacity),
+                    // Reset on touch devices, it doesn't add specificity
+                    '@media (hover: none)': {
+                        backgroundColor: 'transparent'
+                    }
+                    }
+                },
+                textSecondary: {
+                    color: theme.palette.secondary.main,
+                    '&:hover': {
+                    backgroundColor: fade(theme.palette.secondary.main, theme.palette.action.hoverOpacity),
+                    // Reset on touch devices, it doesn't add specificity
+                    '@media (hover: none)': {
+                        backgroundColor: 'transparent'
+                    }
+                    }
+                },
+                flat: {},
+                flatPrimary: {},
+                flatSecondary: {},
+                outlined: {
+                    border: `1px solid ${theme.palette.type === 'light' ? 'rgba(0, 0, 0, 0.23)' : 'rgba(255, 255, 255, 0.23)'}`
+                },
+                colorInherit: {
+                    color: 'inherit'
+                },
+                contained: {
+                    color: theme.palette.getContrastText(theme.palette.grey[300]),
+                    backgroundColor: theme.palette.grey[300],
+                    boxShadow: theme.shadows[2],
+                    '&$focusVisible': {
+                    boxShadow: theme.shadows[6]
+                    },
+                    '&:active': {
+                    boxShadow: theme.shadows[8]
+                    },
+                    '&$disabled': {
+                    color: theme.palette.action.disabled,
+                    boxShadow: theme.shadows[0],
+                    backgroundColor: theme.palette.action.disabledBackground
+                    },
+                    '&:hover': {
+                    backgroundColor: theme.palette.grey.A100,
+                    // Reset on touch devices, it doesn't add specificity
+                    '@media (hover: none)': {
+                        backgroundColor: theme.palette.grey[300]
+                    },
+                    '&$disabled': {
+                        backgroundColor: theme.palette.action.disabledBackground
+                    }
+                    }
+                },
+                containedPrimary: {
+                    color: theme.palette.primary.contrastText,
+                    backgroundColor: theme.palette.primary.main,
+                    '&:hover': {
+                    backgroundColor: theme.palette.primary.dark,
+                    // Reset on touch devices, it doesn't add specificity
+                    '@media (hover: none)': {
+                        backgroundColor: theme.palette.primary.main
+                    }
+                    }
+                },
+                containedSecondary: {
+                    color: theme.palette.secondary.contrastText,
+                    backgroundColor: theme.palette.secondary.main,
+                    '&:hover': {
+                    backgroundColor: theme.palette.secondary.dark,
+                    // Reset on touch devices, it doesn't add specificity
+                    '@media (hover: none)': {
+                        backgroundColor: theme.palette.secondary.main
+                    }
+                    }
+                },
+                raised: {},
+                raisedPrimary: {},
+                raisedSecondary: {},
+                focusVisible: {},
+                disabled: {},
+                fab: {
+                    borderRadius: '50%',
+                    padding: 0,
+                    minWidth: 0,
+                    width: 56,
+                    fontSize: 24,
+                    height: 56,
+                    boxShadow: theme.shadows[6],
+                    '&:active': {
+                    boxShadow: theme.shadows[12]
+                    }
+                },
+                mini: {
+                    width: 40,
+                    height: 40
+                },
+                sizeSmall: {
+                    padding: `${theme.spacing.unit - 1}px ${theme.spacing.unit}px`,
+                    minWidth: theme.spacing.unit * 8,
+                    minHeight: 32,
+                    fontSize: theme.typography.pxToRem(13)
+                },
+                sizeLarge: {
+                    padding: `${theme.spacing.unit}px ${theme.spacing.unit * 3}px`,
+                    minWidth: theme.spacing.unit * 14,
+                    minHeight: 40,
+                    fontSize: theme.typography.pxToRem(15)
+                },
+                fullWidth: {
+                    width: '100%'
+                }
+                });
+                const {
+                    children,
+                    classes,
+                    className: classNameProp,
+                    color,
+                    disabled,
+                    disableFocusRipple,
+                    fullWidth,
+                    focusVisibleClassName,
+                    mini,
+                    size,
+                    variant
+                } = props,
+                
+                other = _objectWithoutProperties(props, ["children", "classes", "className", "color", "disabled", "disableFocusRipple", "fullWidth", "focusVisibleClassName", "mini", "size", "variant"]);
+
+                const fab = variant === 'fab';
+                const contained = variant === 'contained' || variant === 'raised';
+                const text = !contained && !fab;
+                debugger;
+                const className = classNames(classes.root, {
+                    [classes.contained]: contained || fab,
+                    [classes.fab]: fab,
+                    [classes.mini]: fab && mini,
+                    [classes.colorInherit]: color === 'inherit',
+                    [classes.textPrimary]: text && color === 'primary',
+                    [classes.textSecondary]: text && color === 'secondary',
+                    [classes.flat]: text,
+                    [classes.flatPrimary]: text && color === 'primary',
+                    [classes.flatSecondary]: text && color === 'secondary',
+                    [classes.containedPrimary]: !text && color === 'primary',
+                    [classes.containedSecondary]: !text && color === 'secondary',
+                    [classes.raised]: contained || fab,
+                    [classes.raisedPrimary]: (contained || fab) && color === 'primary',
+                    [classes.raisedSecondary]: (contained || fab) && color === 'secondary',
+                    [classes.text]: variant === 'text',
+                    [classes.outlined]: variant === 'outlined',
+                    [classes[`size${capitalize(size)}`]]: size !== 'medium',
+                    [classes.disabled]: disabled,
+                    [classes.fullWidth]: fullWidth
+                }, classNameProp);
+                
+                console.log(className)
+
+                return React.createElement(ButtonBase, _extends({
+                    className: className,
+                    disabled: disabled,
+                    focusRipple: !disableFocusRipple,
+                    focusVisibleClassName: classNames(classes.focusVisible, focusVisibleClassName)
+                }, other), React.createElement("span", {
+                    className: classes.label
+                }, children));
+            </script>
+        </button>
+
+
+        <!-- <div molecule-def="mu.Ripple">
+            <div class="mu-ripple-wrapper">
+                <!-- <div class="mu-circle-ripple mu-ripple-leave-active mu-ripple-leave-to"></div> 
+                <div class="mu-circle-ripple mu-ripple-enter mu-ripple-enter-active"></div>                
+            </div>
+            <script constructor>                              
+                
+            </script>
+        </div> -->
+    </template>
+
+    <div class="header">
+        <div class="container">
+            <h1>Material Ripple Demo</h1>
+            <p>Hello and welcome to the Material Ripple Demo.</p>
+        </div>
+        <div class="container">
+            <button molecule="mu.Button">Test</button>
+        </div>
+    </div>
+</body>
+
+</html>
