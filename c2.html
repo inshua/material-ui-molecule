@@ -1,0 +1,103 @@
+
+<!doctype html>
+<html>
+
+<head>
+
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,minimal-ui">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <!-- <link rel="stylesheet" href="../muse-ui/dist/muse-ui.css">
+    <link rel="stylesheet" href="../muse-ui/dist/muse-ui.js"> -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="molecule.js"></script>
+
+</head>
+
+<body>
+    <template>
+        <!-- 
+            m-disabled:m=disabled means mapped attribute
+        -->
+        <button m-def=mu.Button
+            m-color:s=default
+            m-disabled:m=disabled       
+            m-disabled-focus-ripple:b=false
+            m-full-width:b=false
+            m-mini:b=false
+            m-size:s=medium
+            m-variant:s=text
+
+            onblur:e={this.handleBlur}
+            onfocus:e={this.handleFocus}
+            onkeydown:e={this.handleKeyDown}
+            onkeyup:e={this.handleKeyUp}
+            onmousedown:e={this.handleMouseDown}
+            onmouseleave:e={this.handleMouseLeave}
+            onmouseup:e={this.handleMouseUp}
+            ontouchend:e={this.handleTouchEnd}
+            ontouchmove:e={this.handleTouchMove}
+            ontouchstart:e={this.handleTouchStart}
+            
+            tabIndex="{disabled ? '-1' : A.tabIndex}"
+            class="{this.addClass(A.className)}"
+            m-ref:o={A.buttonRef}
+        >
+            <m:placehodler></m:placehodler>
+            <m:if cond="{!disableRipple && !disabled}"
+                <div m=mu.TouchRipple m-ref:o={this.onRippleRef} center={$.centerRipple} m-renderer={$el.attrs($.touchRippleProps)}/>
+            </m:if>
+        </button>
+
+        <span m=mu.Ripple args="rippleClassName,rippleStyles" class={this.addClass(rippleClassName)} m-style:o="{rippleStyles}" m-pulse:b=false>
+            <span class="{$c.childClassName}"></span>
+            <script m-class>/* define a class extends Molecule */
+                
+            </script>
+            <div class="warn info" m-def="warnBar" scope="local">
+                STOP!
+            </div>
+        </span>
+
+        <script>
+            class mu_Ripple extends Molecule{
+                constructor(element){
+                    this.element = element
+                }
+                apply($c){
+                    this.element.setAttribute('m', 'mu.Ripple');
+                    this.element.class = this.addClass($c.rippleClassName)
+                    this.applyStyle(this.element, $c.rippleStyles)
+                    this.prop('pulse', false)
+                    this.element.key = Molecule.nextKey()
+                    
+                    var span = this.stored.EAXAZ7;
+                    if(!span){        // a random key
+                        span = document.createElement('span');                        
+                        this.element.appendChild(span);
+                        this.stored.EAXAZ7 = span;
+                    }
+                    span.class = $c.childClassName;
+                }
+
+            }
+        </script>
+
+        <span m=mu.TouchRipple class={this.addClass($.classes.root)}>
+            <m:children>{this.state.ripples}</m:children>
+        </span>
+
+    </template>
+
+    <div class="header">
+        <div class="container">
+            <h1>Material Ripple Demo</h1>
+            <p>Hello and welcome to the Material Ripple Demo.</p>
+        </div>
+        <div class="container">
+            <button molecule="mu.Button">Test</button>
+        </div>
+    </div>
+</body>
+
+</html>

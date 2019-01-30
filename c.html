@@ -23,24 +23,25 @@
             m-color:s=default
             m-disabled:m=disabled       
             m-disabled-focus-ripple:b=false
-            m-full-width:b=false
+            m-full-width:b=false    
             m-mini:b=false
             m-size:s=medium
             m-variant:s=text
 
-            m-blur:e={this.handleBlur}
-            m-focus:e={this.handleFocus}
-            m-keydown:e={this.handleKeyDown}
-            m-keyup:e={this.handleKeyUp}
-            m-mousedown:e={this.handleMouseDown}
-            m-mouseleave:e={this.handleMouseLeave}
-            m-mouseup:e={this.handleMouseUp}
-            m-touchend:e={this.handleTouchEnd}
-            m-touchmove:e={this.handleTouchMove}
-            m-touchstart:e={this.handleTouchStart}
-            tabIndex="{disabled ? '-1' : $.tabIndex}"
-            class="{this.extendClass($.className)}"
-            m-ref:o={$.buttonRef}
+            onblur:e={this.handleBlur}
+            onfocus:e={this.handleFocus}
+            onkeydown:e={this.handleKeyDown}
+            onkeyup:e={this.handleKeyUp}
+            onmousedown:e={this.handleMouseDown}
+            onmouseleave:e={this.handleMouseLeave}
+            onmouseup:e={this.handleMouseUp}
+            ontouchend:e={this.handleTouchEnd}
+            ontouchmove:e={this.handleTouchMove}
+            ontouchstart:e={this.handleTouchStart}
+            
+            tabIndex="{disabled ? '-1' : A.tabIndex}"
+            class="{this.extendClass(A.className)}"
+            m-ref:o={A.buttonRef}
         >
             <m:placehodler></m:placehodler>
             <m:if cond="{!disableRipple && !disabled}"
@@ -291,7 +292,6 @@
                 }, children));
             </script>
         </button>
-
 
         <!-- <div molecule-def="mu.Ripple">
             <div class="mu-ripple-wrapper">
