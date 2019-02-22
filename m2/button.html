@@ -1,0 +1,295 @@
+<!doctype html>
+<html>
+
+<head>
+    <script>
+        var process = {
+            env: {
+                NODE_ENV: 'dev'
+            }
+        };
+        var global = window
+    </script>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script src="../node_modules/molecule/molecule.mjs" type="module"></script>
+    <meta name="import_context" value="../">
+    <meta name="node_modules" value="../node_modules/">
+    <import src="@material-ui-molecule/jss.js"></import>
+
+    <script src="../node_modules/classnames/index.js"></script>
+
+    <molecule src="./button-base.html"></molecule>
+
+    <import src="keycode/index.js" tokens="keycode"></import>
+    <import tokens="_objectWithoutProperties" src="@babel/runtime/helpers/builtin/objectWithoutProperties.js"></import>
+    <import tokens="_objectSpread" src="@babel/runtime/helpers/builtin/objectSpread.js"></import>
+    <import tokens="{fade}" src="@material-ui-molecule/core/styles/colorManipulator.js"></import>
+    <import tokens="{capitalize}" src="@material-ui-molecule/core/utils/helpers.js"></import>
+    <import src="@material-ui-molecule/core/utils/ownerWindow.js" tokens="ownerWindow"></import>
+    <import src="deepmerge/dist/umd.js" tokens="deepmerge"></import>
+</head>
+
+<body>
+    <template>
+        <script>
+            export const styles = theme => ({
+                /* Styles applied to the root element. */
+                root: {
+                    ...theme.typography.button,
+                    lineHeight: '1.4em', // Improve readability for multiline button.
+                    boxSizing: 'border-box',
+                    minWidth: 64,
+                    minHeight: 36,
+                    padding: '8px 16px',
+                    borderRadius: theme.shape.borderRadius,
+                    color: theme.palette.text.primary,
+                    transition: theme.transitions.create(['background-color', 'box-shadow'], {
+                        duration: theme.transitions.duration.short,
+                    }),
+                    '&:hover': {
+                        textDecoration: 'none',
+                        backgroundColor: fade(theme.palette.text.primary, theme.palette.action.hoverOpacity),
+                        // Reset on touch devices, it doesn't add specificity
+                        '@media (hover: none)': {
+                            backgroundColor: 'transparent',
+                        },
+                        '&$disabled': {
+                            backgroundColor: 'transparent',
+                        },
+                    },
+                    '&$disabled': {
+                        color: theme.palette.action.disabled,
+                    },
+                },
+                /* Styles applied to the span element that wraps the children. */
+                label: {
+                    width: '100%', // assure the correct width for iOS Safari
+                    display: 'inherit',
+                    alignItems: 'inherit',
+                    justifyContent: 'inherit',
+                },
+                /* Styles applied to the root element if `variant="text"`. */
+                text: {},
+                /* Styles applied to the root element if `variant="text"` and `color="primary"`. */
+                textPrimary: {
+                    color: theme.palette.primary.main,
+                    '&:hover': {
+                        backgroundColor: fade(theme.palette.primary.main, theme.palette.action.hoverOpacity),
+                        // Reset on touch devices, it doesn't add specificity
+                        '@media (hover: none)': {
+                            backgroundColor: 'transparent',
+                        },
+                    },
+                },
+                /* Styles applied to the root element if `variant="text"` and `color="secondary"`. */
+                textSecondary: {
+                    color: theme.palette.secondary.main,
+                    '&:hover': {
+                        backgroundColor: fade(theme.palette.secondary.main, theme.palette.action.hoverOpacity),
+                        // Reset on touch devices, it doesn't add specificity
+                        '@media (hover: none)': {
+                            backgroundColor: 'transparent',
+                        },
+                    },
+                },
+                /* Styles applied to the root element for backwards compatibility with legacy variant naming. */
+                flat: {},
+                /* Styles applied to the root element for backwards compatibility with legacy variant naming. */
+                flatPrimary: {},
+                /* Styles applied to the root element for backwards compatibility with legacy variant naming. */
+                flatSecondary: {},
+                /* Styles applied to the root element if `variant="outlined"`. */
+                outlined: {
+                    border: `1px solid ${theme.palette.type === 'light' ? 'rgba(0, 0, 0, 0.23)' : 'rgba(255, 255, 255, 0.23)'}`,
+                },
+                /* Styles applied to the root element if `variant="[contained | fab]"`. */
+                contained: {
+                    color: theme.palette.getContrastText(theme.palette.grey[300]),
+                    backgroundColor: theme.palette.grey[300],
+                    boxShadow: theme.shadows[2],
+                    '&$focusVisible': {
+                        boxShadow: theme.shadows[6],
+                    },
+                    '&:active': {
+                        boxShadow: theme.shadows[8],
+                    },
+                    '&$disabled': {
+                        color: theme.palette.action.disabled,
+                        boxShadow: theme.shadows[0],
+                        backgroundColor: theme.palette.action.disabledBackground,
+                    },
+                    '&:hover': {
+                        backgroundColor: theme.palette.grey.A100,
+                        // Reset on touch devices, it doesn't add specificity
+                        '@media (hover: none)': {
+                            backgroundColor: theme.palette.grey[300],
+                        },
+                        '&$disabled': {
+                            backgroundColor: theme.palette.action.disabledBackground,
+                        },
+                    },
+                },
+                /* Styles applied to the root element if `variant="[contained | fab]"` and `color="primary"`. */
+                containedPrimary: {
+                    color: theme.palette.primary.contrastText,
+                    backgroundColor: theme.palette.primary.main,
+                    '&:hover': {
+                        backgroundColor: theme.palette.primary.dark,
+                        // Reset on touch devices, it doesn't add specificity
+                        '@media (hover: none)': {
+                            backgroundColor: theme.palette.primary.main,
+                        },
+                    },
+                },
+                /* Styles applied to the root element if `variant="[contained | fab]"` and `color="secondary"`. */
+                containedSecondary: {
+                    color: theme.palette.secondary.contrastText,
+                    backgroundColor: theme.palette.secondary.main,
+                    '&:hover': {
+                        backgroundColor: theme.palette.secondary.dark,
+                        // Reset on touch devices, it doesn't add specificity
+                        '@media (hover: none)': {
+                            backgroundColor: theme.palette.secondary.main,
+                        },
+                    },
+                },
+                /* Styles applied to the root element for backwards compatibility with legacy variant naming. */
+                raised: {}, // legacy
+                /* Styles applied to the root element for backwards compatibility with legacy variant naming. */
+                raisedPrimary: {}, // legacy
+                /* Styles applied to the root element for backwards compatibility with legacy variant naming. */
+                raisedSecondary: {}, // legacy
+                /* Styles applied to the root element if `variant="[fab | extendedFab]"`. */
+                fab: {
+                    borderRadius: '50%',
+                    padding: 0,
+                    minWidth: 0,
+                    width: 56,
+                    height: 56,
+                    boxShadow: theme.shadows[6],
+                    '&:active': {
+                        boxShadow: theme.shadows[12],
+                    },
+                },
+                /* Styles applied to the root element if `variant="extendedFab"`. */
+                extendedFab: {
+                    borderRadius: 48 / 2,
+                    padding: '0 16px',
+                    width: 'auto',
+                    minWidth: 48,
+                    height: 48,
+                },
+                /* Styles applied to the ButtonBase root element if the button is keyboard focused. */
+                focusVisible: {},
+                /* Styles applied to the root element if `disabled={true}`. */
+                disabled: {},
+                /* Styles applied to the root element if `color="inherit"`. */
+                colorInherit: {
+                    color: 'inherit',
+                },
+                /* Styles applied to the root element if `size="mini"` & `variant="[fab | extendedFab]"`. */
+                mini: {
+                    width: 40,
+                    height: 40,
+                },
+                /* Styles applied to the root element if `size="small"`. */
+                sizeSmall: {
+                    padding: '7px 8px',
+                    minWidth: 64,
+                    minHeight: 32,
+                    fontSize: theme.typography.pxToRem(13),
+                },
+                /* Styles applied to the root element if `size="large"`. */
+                sizeLarge: {
+                    padding: '8px 24px',
+                    minWidth: 112,
+                    minHeight: 40,
+                    fontSize: theme.typography.pxToRem(15),
+                },
+                /* Styles applied to the root element if `fullWidth={true}`. */
+                fullWidth: {
+                    width: '100%',
+                },
+            });
+        </script>
+        <button m-def="Button" m="ButtonBase" color="default" component="button" disabled:b=false disable-focus-ripple:b=false
+            full-width:b=false mini:b=false size=medium type=button variant=text
+            class:x:r="$c.className"
+            focus-ripple:x:r="!$c.disableFocusRipple" focus-visible-class-name:x:r="classNames($c.classes.focusVisible, $c.focusVisibleClassName)"
+            onwillinit="debugger;this.setProps($c.other)"
+            >
+            <span class:x="$c.classes.label">${nested}</span>
+            <script m-class>
+                willInit(then){
+                    this.props.buttonClasses = this.attachJss(styles, 'MuiButton', 'MuiButton');
+                    super.willInit(then);
+                }
+                prepareContext() {
+                    const {
+                        children,
+                        buttonClasses:classes,
+                        className: classNameProp,
+                        color,
+                        disabled,
+                        disableFocusRipple,
+                        fullWidth,
+                        focusVisibleClassName,
+                        mini,
+                        size,
+                        variant,
+                        ...other
+                    } = this.props;
+
+                    const fab = variant === 'fab' || variant === 'extendedFab';
+                    const contained = variant === 'contained' || variant === 'raised';
+                    const text = variant === 'text' || variant === 'flat' || variant === 'outlined';
+                    const className = classNames(
+                        classes.root, {
+                            [classes.fab]: fab,
+                            [classes.mini]: fab && mini,
+                            [classes.extendedFab]: variant === 'extendedFab',
+                            [classes.text]: text,
+                            [classes.textPrimary]: text && color === 'primary',
+                            [classes.textSecondary]: text && color === 'secondary',
+                            [classes.flat]: variant === 'text' || variant === 'flat',
+                            [classes.flatPrimary]: (variant === 'text' || variant === 'flat') && color ===
+                                'primary',
+                            [classes.flatSecondary]: (variant === 'text' || variant === 'flat') && color ===
+                                'secondary',
+                            [classes.contained]: contained || fab,
+                            [classes.containedPrimary]: (contained || fab) && color === 'primary',
+                            [classes.containedSecondary]: (contained || fab) && color === 'secondary',
+                            [classes.raised]: contained || fab,
+                            [classes.raisedPrimary]: (contained || fab) && color === 'primary',
+                            [classes.raisedSecondary]: (contained || fab) && color === 'secondary',
+                            [classes.outlined]: variant === 'outlined',
+                            [classes[`size${capitalize(size)}`]]: size !== 'medium',
+                            [classes.disabled]: disabled,
+                            [classes.fullWidth]: fullWidth,
+                            [classes.colorInherit]: color === 'inherit',
+                        },
+                        classNameProp,
+                    );
+                    return {
+                        className,
+                        disableFocusRipple,
+                        classes,
+                        other,
+                        focusVisibleClassName
+                    }
+                    debugger;
+
+                    super.willRender(then);
+                }
+            </script>
+
+        </button>
+    </template>
+
+
+    <button m="Button" color="primary"><span>Hello World</span></button>
+</body>
+
+</html>
