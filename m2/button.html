@@ -214,18 +214,34 @@
                 },
             });
         </script>
-        <button m-def="Button" m="ButtonBase" color="default" component="button" disabled:b=false disable-focus-ripple:b=false
+        <button m-def="Button" color="default" component="button" disabled:b=false disable-focus-ripple:b=false
             full-width:b=false mini:b=false size=medium type=button variant=text
             class:x:r="$c.className"
             focus-ripple:x:r="!$c.disableFocusRipple" focus-visible-class-name:x:r="classNames($c.classes.focusVisible, $c.focusVisibleClassName)"
-            onwillinit="debugger;this.setProps($c.other)"
+            onwillinit="this.setProps($c.other)"
             >
             <span class:x="$c.classes.label">${nested}</span>
             <script m-class>
                 willInit(then){
+                    const ButtonBase = MoleculeModule.Molecule.TYPES['ButtonBase'];
+                    ButtonBase.attachJss(this.element);
+
                     this.props.buttonClasses = this.attachJss(styles, 'MuiButton', 'MuiButton');
                     super.willInit(then);
+                    
+                    this.buttonBase = new ButtonBase(this.element, this.props);
                 }
+                willRender(then){
+                    console.log('Button will render');
+                    super.willRender(then);
+                }
+
+                rendered(then){
+                    console.log('Button rendered');
+                    super.rendered(then);
+                    this.buttonBase && this.buttonBase.render();
+                }
+
                 prepareContext() {
                     const {
                         children,
@@ -272,6 +288,8 @@
                         },
                         classNameProp,
                     );
+
+                    console.log(className);
                     return {
                         className,
                         disableFocusRipple,
@@ -279,9 +297,6 @@
                         other,
                         focusVisibleClassName
                     }
-                    debugger;
-
-                    super.willRender(then);
                 }
             </script>
 

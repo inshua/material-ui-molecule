@@ -70,7 +70,7 @@
             };
         </script>
         <button m-def="ButtonBase" center-ripple:b=false component="button" disable-ripple:b=false focus-ripple:b=false
-                tab-index=0 type="button" onblur:x:r="this.handleBlur"
+                tabIndex=0 type="button" onblur:x:r="this.handleBlur"
                 onFocus:x:r="this.handleFocus"
                 onKeyDown:x:r=this.handleKeyDown
                 onKeyUp:x:r=this.handleKeyUp
@@ -89,6 +89,10 @@
                 <span m=TouchRipple inner-ref:x="this.onRippleRef" center:x="$c.centerRipple" onwillinit="this.setProps($c.TouchRippleProps)"></span>
             </if>
             <script m-class>
+                static attachJss(element){
+                    return MoleculeModule.Molecule.prototype.attachJss.call({element:element}, styles, 'MuiButtonBase', 'MuiButtonBase');
+                }
+
                 willInit(then) {
                     this.props.classes = this.attachJss(styles, 'MuiButtonBase', 'MuiButtonBase');
 
@@ -284,7 +288,17 @@
                     }
                 };
 
-                preparContext() {
+                willRender(then){
+                    console.log('ButtonBase will render');
+                    super.willRender(then);
+                }
+
+                rendered(then){
+                    console.log('ButtonBase rendered');
+                    super.rendered(then);
+                }
+
+                prepareContext() {
                     const {
                         action,
                         buttonRef,
@@ -338,6 +352,8 @@
                     } else {
                         buttonProps.role = 'button';
                     }
+
+                    console.log(className);
 
                     return {className, buttonRef, buttonProps, other, centerRipple, TouchRippleProps, disabled, disableRipple, classes};
 
