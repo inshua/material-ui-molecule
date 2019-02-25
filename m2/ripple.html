@@ -23,33 +23,37 @@
 
 <body>
     <template>
-        <span m-def=Ripple class:x:r="$c.rippleClassName" style:x:r="$c.rippleStyles" 
+        <span m-def=Ripple class:x:r="$c.rippleClassName" style:o:x:r="$c.rippleStyles" 
             pulsate:b=false
             ripple-size:n=0
             ripple-y:n=0
-            onwillinit:x="this.setProps($c.other).install(new Transition(this.props.classes, this.props.timeout))"
-            onentered:x:evt="this.handleEnter"
-            onexit:x:evt="this.handleExit">
+            onwillinit:x="this.setProps($c.other)"
+            >
             <span class:x=$c.childClassName></span>
             <script m-class>
-                constructor(){
-                    super(...arguments);
+                willInit(){
                     this.state = {
                         visible: false,
                         leaving: false,
                     };
+                    this.element.addEventListener('willenter', this.handleEnter.bind(this))
+                    this.element.addEventListener('willleave', this.handleExit.bind(this))
+                    super.willInit(...arguments);
                 }
 
-                handleEnter() {
+                handleEnter(event) {    // react 不支持 handleEnter handleExit 这么先进的东西，只能靠 Transition，搞的很复杂
                     this.setState({
                         visible: true,
                     });
                 };
 
-                handleExit(){
+                handleExit(event){
                     this.setState({
                         leaving: true,
                     });
+                    event.detail.addTask(new Promise((resolve, reject) => {
+                        setTimeout(resolve, DURATION)
+                    }));
                 };
 
                 prepareContext(){
@@ -71,7 +75,7 @@
                             [classes.rippleVisible]: visible,
                             [classes.ripplePulsate]: pulsate,
                         },
-                        classNameProp,
+                        //classNameProp,
                     );
 
                     const rippleStyles = {
@@ -181,9 +185,14 @@
         <span m-def=TouchRipple center:b=false onwillinit="this.setProps($c.other);" class:x:r="classNames($c.classes.root, $c.className)">
             ${this.state.ripples}
             <script m-class>
-                willInit(){
+                willInit(){                    
                     this.props.classes = this.attachJss(styles, 'MuiTouchRipple', 'MuiTouchRipple');
                     super.willInit(...arguments);
+                }
+
+                inited(){
+                    super.inited(...arguments);
+                    this.props.innerRef && this.props.innerRef(this);
                 }
 
                 constructor(){
@@ -297,12 +306,13 @@
 
                     this.setState(state => {
                         return {
-                        nextKey: state.nextKey + 1,
-                        ripples: [
-                            ...state.ripples,
-                            {$:'span', m:'Ripple', key: state.nextKey, 
-                                props:{classes: this.props.classes, timeout: this.props.timeout, pulsate: pulsate, rippleX: rippleX, rippleY: rippleY, rippleSize: rippleSize}}
-                        ],
+                            nextKey: state.nextKey + 1,
+                            ripples: [
+                                ...state.ripples,
+                                {$:'span', m:'Ripple', key: state.nextKey, 
+                                    props:{classes: this.props.classes, timeout: DURATION, pulsate: pulsate, 
+                                            rippleX: rippleX, rippleY: rippleY, rippleSize: rippleSize}}
+                            ],
                         };
                     }, cb);
                 };

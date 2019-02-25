@@ -86,7 +86,7 @@
                 onwillinit="this.setProps($c.buttonProps).setProps($c.other)">
             ${nested}
             <if cond="!$c.disableRipple && !$c.disabled">
-                <span m=TouchRipple inner-ref:x="this.onRippleRef" center:x="$c.centerRipple" onwillinit="this.setProps($c.TouchRippleProps)"></span>
+                <span m=TouchRipple inner-ref:x="this.onRippleRef.bind(this)" center:x="$c.centerRipple" onwillinit="this.setProps($c.TouchRippleProps)"></span>
             </if>
             <script m-class>
                 static attachJss(element){
