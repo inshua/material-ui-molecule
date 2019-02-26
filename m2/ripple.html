@@ -27,7 +27,6 @@
             pulsate:b=false
             ripple-size:n=0
             ripple-y:n=0
-            onwillinit:x="this.setProps($c.other)"
             >
             <span class:x=$c.childClassName></span>
             <script m-class>
@@ -182,7 +181,7 @@
                 },
             });
         </script>
-        <span m-def=TouchRipple center:b=false onwillinit="this.setProps($c.other);" class:x:r="classNames($c.classes.root, $c.className)">
+        <span m-def=TouchRipple center:b=false class:x:r="$c.className">
             ${this.state.ripples}
             <script m-class>
                 willInit(){                    
@@ -348,7 +347,7 @@
                 prepareContext() {
                     const { center, classes, className, ...other } = this.props;
 
-                    return {className: classNames(classes.root, className), classes, other};
+                    return {className: classNames(classes.root, this.instanceProps.className), classes, other};
                 }
             </script>
         </span>              

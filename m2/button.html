@@ -218,10 +218,13 @@
             full-width:b=false mini:b=false size=medium type=button variant=text
             class:x:r="$c.className"
             focus-ripple:x:r="!$c.disableFocusRipple" focus-visible-class-name:x:r="classNames($c.classes.focusVisible, $c.focusVisibleClassName)"
-            onwillinit="this.setProps($c.other)"
             >
             <span class:x="$c.classes.label">${nested}</span>
             <script m-class>
+                constructor(element, props, state){
+                    super(element, Object.assign(props, {innerHtmlAsChild:true}), state);
+                }
+
                 willInit(then){
                     const ButtonBase = MoleculeModule.Molecule.TYPES['ButtonBase'];
                     ButtonBase.attachJss(this.element);
@@ -229,11 +232,21 @@
                     this.props.buttonClasses = this.attachJss(styles, 'MuiButton', 'MuiButton');
                     super.willInit(then);
                     
-                    this.buttonBase = new ButtonBase(this.element, this.props);
+                    this.buttonBase = new ButtonBase(this.element, this.props); 
+                    const f = this.buttonBase.createChildren.bind(this.buttonBase);
+                    const self = this;
+                    this.buttonBase.createChildren = function(context, nested){
+                        return f(context, self.children)
+                    }
+                    this.render();  // render again
                 }
                 willRender(then){
                     console.log('Button will render');
                     super.willRender(then);
+                }
+
+                assignChildren(children){
+                    this.children = children;
                 }
 
                 rendered(then){
@@ -286,16 +299,14 @@
                             [classes.fullWidth]: fullWidth,
                             [classes.colorInherit]: color === 'inherit',
                         },
-                        classNameProp,
+                        this.instanceProps.className,
                     );
 
-                    console.log(className);
                     return {
                         className,
                         disableFocusRipple,
                         classes,
-                        other,
-                        focusVisibleClassName
+                        focusVisibleClassName                        
                     }
                 }
             </script>
@@ -304,7 +315,8 @@
     </template>
 
 
-    <button m="Button" color="primary"><span>Hello World</span></button>
+    <button m="Button" color="primary">Hello World</button>
+    <button m="Button" color="primary" variant="contained">Hello World</button>
 </body>
 
 </html>

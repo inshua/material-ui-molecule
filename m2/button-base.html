@@ -83,7 +83,7 @@
                 tab-index:x:r="this.props.disabled ? '-1' : this.props.tabIndex"
                 class:x:r="$c.className"
                 ref:o:x:r="$c.buttonRef"
-                onwillinit="this.setProps($c.buttonProps).setProps($c.other)">
+                onwillinit="this.setProps($c.buttonProps)">
             ${nested}
             <if cond="!$c.disableRipple && !$c.disabled">
                 <span m=TouchRipple inner-ref:x="this.onRippleRef.bind(this)" center:x="$c.centerRipple" onwillinit="this.setProps($c.TouchRippleProps)"></span>
@@ -159,7 +159,13 @@
                     super.willInit(then);
                 }
 
-                componentDidUpdate(prevProps, prevState) {
+                setState(){
+                    const prevState = deepmerge({},this.state);
+                    super.setState(...arguments)
+                    this.componentDidUpdate(prevState)
+                }
+
+                componentDidUpdate(prevState) {
                     if (
                         this.props.focusRipple &&
                         !this.props.disableRipple &&
@@ -355,7 +361,7 @@
 
                     console.log(className);
 
-                    return {className, buttonRef, buttonProps, other, centerRipple, TouchRippleProps, disabled, disableRipple, classes};
+                    return {className, buttonRef, buttonProps, centerRipple, TouchRippleProps, disabled, disableRipple, classes};
 
                 }
             </script>
