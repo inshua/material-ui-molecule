@@ -8,4 +8,4 @@ cd material-ui-molecule
 http-server
 ```
 
-`button/button.html` is avaliable now
+`m2/button.html` is avaliable now
